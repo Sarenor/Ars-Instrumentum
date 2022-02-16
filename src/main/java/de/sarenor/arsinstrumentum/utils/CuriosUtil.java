@@ -42,9 +42,16 @@ public class CuriosUtil {
     }
 
     private static void setAllSpellfoci(IDynamicStackHandler dynamicStackHandler, List<ItemStack> spellfoci) {
-        int maxLength = Math.min(dynamicStackHandler.getSlots(), spellfoci.size());
+        int maxLength = Math.max(dynamicStackHandler.getSlots(), spellfoci.size());
         for (int i = 0; i < maxLength; i++) {
-            dynamicStackHandler.setStackInSlot(i, spellfoci.get(i));
+            if (i >= dynamicStackHandler.getSlots()) {
+                break;
+            }
+            if (i < spellfoci.size()) {
+                dynamicStackHandler.setStackInSlot(i, spellfoci.get(i));
+            } else {
+                dynamicStackHandler.setStackInSlot(i, ItemStack.EMPTY);
+            }
         }
     }
 }

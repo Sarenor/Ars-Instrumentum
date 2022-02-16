@@ -8,6 +8,7 @@ buildscript {
             name "Sponge"
             url "https://repo.spongepowered.org/repository/maven-public/"
         }
+        maven { url 'https://maven.blamejared.com' }
 
         mavenLocal()
         maven { url = 'https://maven.parchmentmc.org' }
@@ -147,8 +148,8 @@ repositories {
 dependencies {
 
     minecraft 'net.minecraftforge:forge:1.18.1-39.0.76'
-    runtimeOnly fg.deobf("curse.maven:exp-401955:3647553")  // Ars Nouveau 2.2.3
-    compileOnly fg.deobf("curse.maven:exp-401955:3647553")
+    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.5.78]")
+    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.5.78]")
 
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65")
@@ -169,12 +170,12 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "ArsNouveau Addon",
-                "Specification-Vendor": "ars_instrumentumsareus",
+                "Specification-Title": "Ars Instrumentum",
+                "Specification-Vendor": "ars_instrumentum",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"ars_instrumentumsareus",
+                "Implementation-Vendor" :"ars_instrumentum",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
         ])
     }
