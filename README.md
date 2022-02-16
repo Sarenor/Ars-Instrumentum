@@ -1,6 +1,7 @@
 # Ars Instrumentum
 
-A small Addon to Ars Nouveau to provide a handful of utility items that should improve your quality of life.
+A small Addon to Ars Nouveau to provide a handful of utility items that should improve your quality of life.   
+[Releases](https://www.curseforge.com/minecraft/mc-mods/ars-instrumentum/files) available on Curseforge.
 
 ## Current Features:
 
