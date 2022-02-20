@@ -36,25 +36,29 @@ public class ArmariumStorage {
         }
     }
 
-    public ArmariumSlot storeAndGet(List<ItemStack> armorItems, List<ItemStack> hotbarItems, List<ItemStack> spellfocus) {
+    public ArmariumSlot storeAndGet(List<ItemStack> armorItems, List<ItemStack> hotbarItems, List<ItemStack> spellfocus, Slots slotsToGet) {
         ArmariumSlot armariumSlot = armariumSlots.getOrDefault(currentSlot, new ArmariumSlot());
         armariumSlot.setArmor(armorItems);
         armariumSlot.setHotbar(hotbarItems);
         armariumSlot.setSpellfoci(spellfocus);
         armariumSlots.put(currentSlot, armariumSlot);
 
-        currentSlot = Slots.getNextSlot(currentSlot);
+        currentSlot = slotsToGet != null ? slotsToGet : Slots.getNextSlot(currentSlot);
 
         writeArmariumStorageToArmariumItem();
         return armariumSlots.getOrDefault(currentSlot, new ArmariumSlot());
     }
 
     public String getTooltip() {
-        if (armariumSlots != null && !armariumSlots.isEmpty()) {
+        if (!armariumSlots.isEmpty()) {
             return "Next slots armor is: " + armariumSlots.get(Slots.getNextSlot(currentSlot)).listArmor();
         } else {
             return "";
         }
+    }
+
+    public Map<Slots, ArmariumSlot> getArmariumSlots() {
+        return this.armariumSlots;
     }
 
     private void writeArmariumStorageToArmariumItem() {

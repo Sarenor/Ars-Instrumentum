@@ -26,5 +26,11 @@ public class Networking {
                 WizardsArmariumSwitchMessage::new,
                 WizardsArmariumSwitchMessage::handle);
 
+        INSTANCE.registerMessage(nextID(),
+                WizardsArmariumChoiceMessage.class,
+                WizardsArmariumChoiceMessage::toBytes,
+                WizardsArmariumChoiceMessage::new,
+                WizardsArmariumChoiceMessage::handle);
+
     }
 }

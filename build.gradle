@@ -34,7 +34,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 
-version = '1.1.3'
+version = '1.2.0'
 group = 'de.sarenor.arsinstrumentum' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'ars_instrumentum-1.18.1'
 
@@ -148,8 +148,8 @@ repositories {
 dependencies {
 
     minecraft 'net.minecraftforge:forge:1.18.1-39.0.76'
-    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.5.78]")
-    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.5.78]")
+    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.6.91]")
+    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.6.91]")
 
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65")

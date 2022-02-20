@@ -18,13 +18,16 @@ import org.lwjgl.glfw.GLFW;
 public class ModKeyBindings {
 
     public static final String SWITCH_ARMARIUM_SLOT_ID = "key.ars_nouveau.switch_armarium_slot";
+    public static final String CHOOSE_ARMARIUM_SLOT_ID = "key.ars_nouveau.choose_armarium_slot";
     private static final String CATEGORY = "key.category.ars_nouveau.general";
-    public static final KeyMapping SWITCH_ARMARIUM_SLOT = new KeyMapping("key.ars_nouveau.switch_armarium_slot", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY);
+    public static final KeyMapping SWITCH_ARMARIUM_SLOT = new KeyMapping(SWITCH_ARMARIUM_SLOT_ID, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY);
+    public static final KeyMapping CHOOSE_ARMARIUM_SLOT = new KeyMapping(CHOOSE_ARMARIUM_SLOT_ID, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, CATEGORY);
 
     @SubscribeEvent
     public static void registerKeyBindings(final FMLClientSetupEvent event) {
         log.info("ArsInstrumentum: Keybindings started");
         ClientRegistry.registerKeyBinding(SWITCH_ARMARIUM_SLOT);
+        ClientRegistry.registerKeyBinding(CHOOSE_ARMARIUM_SLOT);
         log.info("ArsInstrumentum: Keybindings ended");
     }
 }

@@ -19,6 +19,7 @@ public class DataGenConfig {
         generator.addProvider(new Recipes(generator));
         generator.addProvider(new LanguageProvider(generator, "en_us"));
         generator.addProvider(new ItemModels(generator, event.getExistingFileHelper()));
+        generator.addProvider(new ImbuementRecipes(generator));
         log.info("Ars Instrumentum: Data Generation ended.");
     }
 }
