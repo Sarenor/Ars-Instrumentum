@@ -148,8 +148,8 @@ repositories {
 dependencies {
 
     minecraft 'net.minecraftforge:forge:1.18.1-39.0.76'
-    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.6.91]")
-    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.6.91]")
+    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.7.97]")
+    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.1:[2.2.7.97]")
 
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.1-65")
