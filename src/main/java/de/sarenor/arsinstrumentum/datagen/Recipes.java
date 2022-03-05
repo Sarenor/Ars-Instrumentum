@@ -38,5 +38,12 @@ public class Recipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(Registration.RUNIC_STORAGE_STONE.get()).unlockedBy("has_journal", InventoryChangeTrigger.TriggerInstance.hasItems(ItemsRegistry.WORN_NOTEBOOK))
                 .requires(Registration.RUNIC_STORAGE_STONE.get())
                 .save(consumer, ArsInstrumentum.MODID + ":" + RunicStorageStone.RUNIC_STORAGE_STONE_ALTERNATE_RECIPE_ID);
+
+        ShapelessRecipeBuilder.shapeless(Registration.COPY_PASTE_SPELL_SCROLL.get()).unlockedBy("has_journal", InventoryChangeTrigger.TriggerInstance.hasItems(ItemsRegistry.WORN_NOTEBOOK))
+                .requires(ItemsRegistry.BLANK_PARCHMENT)
+                .requires(ItemsRegistry.SOURCE_GEM)
+                .requires(Items.INK_SAC)
+                .requires(Items.FEATHER)
+                .save(consumer);
     }
 }

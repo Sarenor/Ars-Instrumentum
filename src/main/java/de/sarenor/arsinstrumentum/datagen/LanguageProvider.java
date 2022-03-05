@@ -23,6 +23,7 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
         add(Registration.SCROLL_OF_SAVE_STARBUNCLE.get(), "Scroll of Save Starbuncle");
         add(Registration.RUNIC_STORAGE_STONE.get(), "Runic Stone of Storage");
         add(Registration.FAKE_WILDEN_TRIBUTE.get(), "Essence of Vanquished Foes");
+        add(Registration.COPY_PASTE_SPELL_SCROLL.get(), "Scroll of Spelltransfer");
         add(SWITCH_ARMARIUM_SLOT_ID, "Switch Wizards Armarium");
         add(CHOOSE_ARMARIUM_SLOT_ID, "(Wizards Armarium) Toggle Selection HUD");
         log.info("ArsInstrumentum: AddTranslation ended");
