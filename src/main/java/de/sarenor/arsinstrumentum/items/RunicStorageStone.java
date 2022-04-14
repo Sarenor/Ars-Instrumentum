@@ -2,8 +2,8 @@ package de.sarenor.arsinstrumentum.items;
 
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.util.NBTUtil;
-import com.hollingsworth.arsnouveau.common.block.tile.ArcaneRelayTile;
 import com.hollingsworth.arsnouveau.common.block.tile.RelaySplitterTile;
+import com.hollingsworth.arsnouveau.common.block.tile.RelayTile;
 import com.hollingsworth.arsnouveau.common.items.ModItem;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import de.sarenor.arsinstrumentum.utils.BlockPosUtils;
@@ -57,11 +57,11 @@ public class RunicStorageStone extends ModItem {
         Level world = context.getLevel();
 
 
-        if (world.getBlockEntity(pos) instanceof ArcaneRelayTile arcaneRelayTile) {
+        if (world.getBlockEntity(pos) instanceof RelayTile relayTile) {
             if (playerEntity.isShiftKeyDown()) {
-                apply(heldStone, arcaneRelayTile, playerEntity);
+                apply(heldStone, relayTile, playerEntity);
             } else {
-                store(heldStone, arcaneRelayTile, playerEntity);
+                store(heldStone, relayTile, playerEntity);
             }
         }
 
@@ -81,19 +81,19 @@ public class RunicStorageStone extends ModItem {
         }
     }
 
-    private void apply(ItemStack stone, ArcaneRelayTile arcaneRelayTile, Player player) {
+    private void apply(ItemStack stone, RelayTile relayTile, Player player) {
         CompoundTag stoneTag = stone.getOrCreateTag();
         if (stoneTag.contains(RUNIC_STORAGE_STONE_TAG_ID)) {
             CompoundTag configTag = stoneTag.getCompound(RUNIC_STORAGE_STONE_TAG_ID);
             if (RelayType.valueOf(configTag.getString(RELAY_TYPE)) == RelayType.SPLITTER) {
-                if (arcaneRelayTile instanceof RelaySplitterTile relaySplitterTile) {
+                if (relayTile instanceof RelaySplitterTile relaySplitterTile) {
                     applySplitterRelay(configTag, relaySplitterTile, player);
                 } else {
                     PortUtil.sendMessage(player, new TextComponent(CANT_APPLY_SPLITTER_CONFIGURATION_TO_ARCANE));
                 }
             } else {
-                if (!(arcaneRelayTile instanceof RelaySplitterTile)) {
-                    applyArcaneRelay(configTag, arcaneRelayTile, player);
+                if (!(relayTile instanceof RelaySplitterTile)) {
+                    applyArcaneRelay(configTag, relayTile, player);
                 } else {
                     PortUtil.sendMessage(player, new TextComponent(CANT_APPLY_ARCANE_CONFIGURATION_TO_SPLITTER));
                 }
@@ -127,30 +127,30 @@ public class RunicStorageStone extends ModItem {
         relaySplitterTile.update();
     }
 
-    private void applyArcaneRelay(CompoundTag configTag, ArcaneRelayTile arcaneRelayTile, Player player) {
+    private void applyArcaneRelay(CompoundTag configTag, RelayTile relayTile, Player player) {
         BlockPos to = deserializeBlockPos(configTag.getCompound(TO_CONFIGURATION));
         BlockPos from = deserializeBlockPos(configTag.getCompound(FROM_CONFIGURATION));
-        if (!arcaneRelayTile.closeEnough(to)) {
+        if (!relayTile.closeEnough(to)) {
             PortUtil.sendMessage(player, new TextComponent("Deposit-Location " + BlockPosUtils.toString(to) + " is to far away."
                     + " No configuration has been applied"));
             return;
         }
-        if (!arcaneRelayTile.closeEnough(from)) {
+        if (!relayTile.closeEnough(from)) {
             PortUtil.sendMessage(player, new TextComponent("Take-Location " + BlockPosUtils.toString(from) + " is to far away."
                     + " No configuration has been applied"));
             return;
         }
-        arcaneRelayTile.setSendTo(to);
-        arcaneRelayTile.setTakeFrom(from);
-        arcaneRelayTile.update();
+        relayTile.setSendTo(to);
+        relayTile.setTakeFrom(from);
+        relayTile.update();
         PortUtil.sendMessage(player, new TextComponent(APPLIED_CONFIGURATION));
     }
 
-    private void store(ItemStack stone, ArcaneRelayTile arcaneRelayTile, Player player) {
-        if (arcaneRelayTile instanceof RelaySplitterTile relaySplitterTile) {
+    private void store(ItemStack stone, RelayTile relayTile, Player player) {
+        if (relayTile instanceof RelaySplitterTile relaySplitterTile) {
             storeSplitterRelay(stone, relaySplitterTile);
         } else {
-            storeArcaneRelay(stone, arcaneRelayTile);
+            storeArcaneRelay(stone, relayTile);
         }
         PortUtil.sendMessage(player, new TextComponent(SAVED_CONFIGURATION));
     }
@@ -171,14 +171,14 @@ public class RunicStorageStone extends ModItem {
         stoneTag.put(RUNIC_STORAGE_STONE_TAG_ID, configTag);
     }
 
-    private void storeArcaneRelay(ItemStack stone, ArcaneRelayTile arcaneRelayTile) {
+    private void storeArcaneRelay(ItemStack stone, RelayTile relayTile) {
         CompoundTag stoneTag = stone.getOrCreateTag();
         CompoundTag configTag = new CompoundTag();
-        configTag.put(TO_CONFIGURATION, serializeBlockPos(arcaneRelayTile.getToPos()));
-        configTag.put(FROM_CONFIGURATION, serializeBlockPos(arcaneRelayTile.getFromPos()));
+        configTag.put(TO_CONFIGURATION, serializeBlockPos(relayTile.getToPos()));
+        configTag.put(FROM_CONFIGURATION, serializeBlockPos(relayTile.getFromPos()));
         configTag.putString(RELAY_TYPE, RelayType.STANDARD.name());
-        configTag.putString(TOOLTIP, "Stored Non-Splitter Config with Take-Position " + BlockPosUtils.toString(arcaneRelayTile.getFromPos())
-                + " and Deposit-Position " + BlockPosUtils.toString(arcaneRelayTile.getToPos()));
+        configTag.putString(TOOLTIP, "Stored Non-Splitter Config with Take-Position " + BlockPosUtils.toString(relayTile.getFromPos())
+                + " and Deposit-Position " + BlockPosUtils.toString(relayTile.getToPos()));
         stoneTag.put(RUNIC_STORAGE_STONE_TAG_ID, configTag);
         stone.setTag(stoneTag);
     }

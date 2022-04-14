@@ -1,7 +1,12 @@
 package de.sarenor.arsinstrumentum.items.curios.armarium;
 
 import com.hollingsworth.arsnouveau.api.item.ArsNouveauCurio;
-import com.hollingsworth.arsnouveau.client.gui.RadialMenu.*;
+import com.hollingsworth.arsnouveau.client.gui.RadialMenu.GuiRadialMenu;
+import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenu;
+import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenuSlot;
+import com.hollingsworth.arsnouveau.client.gui.RadialMenu.SecondaryIconPosition;
+import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.sarenor.arsinstrumentum.network.Networking;
 import de.sarenor.arsinstrumentum.network.WizardsArmariumChoiceMessage;
 import de.sarenor.arsinstrumentum.utils.CuriosUtil;
@@ -85,10 +90,10 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {
-        return new RadialMenu<>((int slot) -> Networking.INSTANCE.sendToServer(new WizardsArmariumChoiceMessage(slot)),
+        return new RadialMenu<Item>((int slot) -> Networking.INSTANCE.sendToServer(new WizardsArmariumChoiceMessage(slot)),
                 getRadialMenuSlots(armariumStorage),
                 SecondaryIconPosition.EAST,
-                GuiRadialMenuUtils::drawItemAsIcon,
+                WizardsArmarium::renderItemAsNonTransparentIcon,
                 0);
     }
 
@@ -104,6 +109,10 @@ public class WizardsArmarium extends ArsNouveauCurio {
         Item primaryIcon = armariumSlot.getSpellfoci().stream().map(ItemStack::getItem).findFirst().orElse(null);
         List<Item> secondaryIcons = armariumSlot.getArmor().stream().map(ItemStack::getItem).collect(Collectors.toList());
         return new RadialMenuSlot<>("", primaryIcon, secondaryIcons);
+    }
+
+    public static void renderItemAsNonTransparentIcon(Item providedItem, PoseStack poseStack, int positionX, int positionY, int size) {
+        RenderUtils.drawItemAsIcon(providedItem, poseStack, positionX, positionY, size, false);
     }
 
     @Override

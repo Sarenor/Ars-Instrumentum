@@ -6,7 +6,7 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[35,)" #mandatory (28 is current forge version)
+loaderVersion="[40,)" #mandatory (28 is current forge version)
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="http://my.issue.tracker/" #optional
 
@@ -40,7 +40,7 @@ Ars Instrumentum is a small set of magical utilities and tools that I wanted to 
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[38.0.12,)" #mandatory
+    versionRange="[40,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -49,26 +49,26 @@ Ars Instrumentum is a small set of magical utilities and tools that I wanted to 
 [[dependencies.ars_instrumentum]]
     modId="patchouli"
     mandatory=true
-    versionRange="[1.18.1-61,)"
+    versionRange="[1.18.2-67,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.ars_instrumentum]]
     modId="curios"
     mandatory=true
-    versionRange="[1.18.1-5.0.3.0,)"
+    versionRange="[1.18.2-5.0.6.3,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.ars_instrumentum]]
     modId="geckolib3"
     mandatory=true
-    versionRange="[3.0.1,)"
+    versionRange="[3.0.13,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.ars_instrumentum]]
     modId="ars_nouveau"
     mandatory=true
-    versionRange="[2.2.7,)"
+    versionRange="[2.3.2.138,)"
     ordering="AFTER"
     side="BOTH"
