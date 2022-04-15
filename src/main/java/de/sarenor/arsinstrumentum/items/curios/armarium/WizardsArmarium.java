@@ -6,14 +6,19 @@ import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenu;
 import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenuSlot;
 import com.hollingsworth.arsnouveau.client.gui.RadialMenu.SecondaryIconPosition;
 import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
+import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.sarenor.arsinstrumentum.network.Networking;
 import de.sarenor.arsinstrumentum.network.WizardsArmariumChoiceMessage;
 import de.sarenor.arsinstrumentum.utils.CuriosUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,6 +27,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -39,6 +45,8 @@ public class WizardsArmarium extends ArsNouveauCurio {
     public static final String WIZARDS_ARMARIUM_ID = "wizards_armarium";
     private static final int HOTBAR_SIZE = 9;
     private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    private static final String SWITCHED_TO_NO_HOTBAR = "Wizards Armarium will not switch Hotbar Items";
+    private static final String SWITCHED_TO_HOTBAR = "Wizards Armarium will switch Hotbar Items";
 
     @OnlyIn(Dist.CLIENT)
     public static void openSwitchRadialMenu(Player player) {
@@ -54,7 +62,9 @@ public class WizardsArmarium extends ArsNouveauCurio {
                 player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), Slots.getSlotForInt(choosenSlot));
 
         setArmor(player, armariumSlot.getArmor());
-        setHotbar(player, armariumSlot.getHotbar());
+        if (armariumStorage.isHotbarSwitch()) {
+            setHotbar(player, armariumSlot.getHotbar());
+        }
         CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
     }
 
@@ -65,8 +75,20 @@ public class WizardsArmarium extends ArsNouveauCurio {
                 player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), null);
 
         setArmor(player, armariumSlot.getArmor());
-        setHotbar(player, armariumSlot.getHotbar());
+        if (armariumStorage.isHotbarSwitch()) {
+            setHotbar(player, armariumSlot.getHotbar());
+        }
         CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
+    }
+
+    public static void handleModeSwitch(ItemStack itemStack, Player player) {
+        ArmariumStorage storage = new ArmariumStorage(itemStack);
+        storage.switchIsHotbarSwitch();
+        if (storage.isHotbarSwitch()) {
+            PortUtil.sendMessage(player, new TextComponent(SWITCHED_TO_HOTBAR));
+        } else {
+            PortUtil.sendMessage(player, new TextComponent(SWITCHED_TO_NO_HOTBAR));
+        }
     }
 
     private static void setArmor(ServerPlayer player, List<ItemStack> armorItems) {
@@ -90,7 +112,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {
-        return new RadialMenu<Item>((int slot) -> Networking.INSTANCE.sendToServer(new WizardsArmariumChoiceMessage(slot)),
+        return new RadialMenu<>((int slot) -> Networking.INSTANCE.sendToServer(new WizardsArmariumChoiceMessage(slot)),
                 getRadialMenuSlots(armariumStorage),
                 SecondaryIconPosition.EAST,
                 WizardsArmarium::renderItemAsNonTransparentIcon,
@@ -116,9 +138,29 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     @Override
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
+        if (world.isClientSide) {
+            return super.use(world, player, handIn);
+        }
+        ItemStack heldArmarium = player.getItemInHand(handIn);
+
+        if (player.isShiftKeyDown()) {
+            handleModeSwitch(heldArmarium, player);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, heldArmarium);
+        }
+
+        return new InteractionResultHolder<>(InteractionResult.PASS, heldArmarium);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
+        return false;
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag p_77624_4_) {
         ArmariumStorage armariumStorage = new ArmariumStorage(stack);
-        tooltip.add(new TextComponent(armariumStorage.getTooltip()));
+        tooltip.addAll(armariumStorage.getTooltip());
     }
 
     @Override
