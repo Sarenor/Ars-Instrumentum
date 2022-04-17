@@ -44,7 +44,11 @@ public class ArmariumStorage {
                 armariumSlots.put(slot, ArmariumSlot.deserialize(tag.getCompound(slot.name())));
             }
         }
-        this.isHotbarSwitch = tag.getBoolean(IS_HOTBAR_SWITCH);
+        if (tag.contains(IS_HOTBAR_SWITCH)) {
+            this.isHotbarSwitch = tag.getBoolean(IS_HOTBAR_SWITCH);
+        } else {
+            this.isHotbarSwitch = true;
+        }
     }
 
     public void switchIsHotbarSwitch() {
