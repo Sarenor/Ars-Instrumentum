@@ -13,6 +13,8 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.Tags;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -107,6 +109,15 @@ public class ApparatusRecipes extends ApparatusRecipeProvider {
                 .withReagent(ItemsRegistry.NOVICE_BOOTS)
                 .withPedestalItem(4, ItemsRegistry.BLAZE_FIBER)
                 .keepNbtOfReagent(true)
+                .build());
+
+        this.recipes.add(ApparatusRecipeBuilder.builder()
+                .withResult(Registration.NUMERIC_CHARM.get())
+                .withReagent(ItemsRegistry.DULL_TRINKET)
+                .withPedestalItem(2, Ingredient.of(Tags.Items.INGOTS_GOLD))
+                .withPedestalItem(1, Items.DIAMOND)
+                .withPedestalItem(Items.INK_SAC)
+                .withPedestalItem(Items.PAPER)
                 .build());
     }
 
