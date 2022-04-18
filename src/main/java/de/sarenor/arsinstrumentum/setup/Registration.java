@@ -5,6 +5,7 @@ import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
 import de.sarenor.arsinstrumentum.items.RunicStorageStone;
 import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
+import de.sarenor.arsinstrumentum.items.curios.NumericCharm;
 import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,7 +25,14 @@ public class Registration {
     public static final RegistryObject<Item> COPY_PASTE_SPELL_SCROLL = ITEMS.register(CopyPasteSpellScroll.COPY_PASTE_SPELL_SCROLL, CopyPasteSpellScroll::new);
     public static final RegistryObject<Item> FAKE_WILDEN_TRIBUTE = ITEMS.register(FAKE_WILDEN_TRIBUTE_ID, () -> new Item(new Item.Properties().tab(ArsNouveau.itemGroup)));
 
+    public static final RegistryObject<Item> NUMERIC_CHARM; //choose one of the two styles, I usually divide to keep lines shorter
+
+    static {
+        NUMERIC_CHARM = ITEMS.register("numeric_mana_charm", () -> new NumericCharm(new Item.Properties().stacksTo(1).tab(ArsNouveau.itemGroup)));
+    }
+
     public static void init(IEventBus bus) {
         ITEMS.register(bus);
     }
+
 }
