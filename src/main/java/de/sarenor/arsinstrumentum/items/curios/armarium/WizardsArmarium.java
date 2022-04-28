@@ -133,7 +133,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
         return new RadialMenuSlot<>("", primaryIcon, secondaryIcons);
     }
 
-    public static void renderItemAsNonTransparentIcon(Item providedItem, PoseStack poseStack, int positionX, int positionY, int size) {
+    public static void renderItemAsNonTransparentIcon(Item providedItem, PoseStack poseStack, int positionX, int positionY, int size, boolean renderTransparent) {
         RenderUtils.drawItemAsIcon(providedItem, poseStack, positionX, positionY, size, false);
     }
 

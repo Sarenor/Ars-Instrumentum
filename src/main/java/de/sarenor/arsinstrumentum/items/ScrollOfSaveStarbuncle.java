@@ -21,8 +21,8 @@ import net.minecraft.world.level.LevelReader;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static com.hollingsworth.arsnouveau.common.entity.Starbuncle.FROM_POS;
-import static com.hollingsworth.arsnouveau.common.entity.Starbuncle.TO_POS;
+import static com.hollingsworth.arsnouveau.common.entity.Starbuncle.FROM_POS_SIZE;
+import static com.hollingsworth.arsnouveau.common.entity.Starbuncle.TO_POS_SIZE;
 import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.*;
 
 public class ScrollOfSaveStarbuncle extends ModItem {
@@ -104,8 +104,8 @@ public class ScrollOfSaveStarbuncle extends ModItem {
             starbuncle.TO_LIST = deserializeBlockPosList(configTag, TO_LIST);
             starbuncle.allowedItems = deserializeItemList(configTag, ALLOWED_ITEMS);
             starbuncle.ignoreItems = deserializeItemList(configTag, IGNORED_ITEMS);
-            starbuncle.getEntityData().set(FROM_POS, starbuncle.FROM_LIST.size());
-            starbuncle.getEntityData().set(TO_POS, starbuncle.TO_LIST.size());
+            starbuncle.getEntityData().set(FROM_POS_SIZE, starbuncle.FROM_LIST.size());
+            starbuncle.getEntityData().set(TO_POS_SIZE, starbuncle.TO_LIST.size());
             PortUtil.sendMessage(player, new TextComponent(APPLIED_CONFIGURATION));
         }
     }
