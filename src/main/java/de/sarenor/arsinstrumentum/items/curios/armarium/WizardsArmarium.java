@@ -6,6 +6,8 @@ import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenu;
 import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenuSlot;
 import com.hollingsworth.arsnouveau.client.gui.RadialMenu.SecondaryIconPosition;
 import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
+import com.hollingsworth.arsnouveau.common.entity.familiar.FamiliarEntity;
+import com.hollingsworth.arsnouveau.common.network.PacketSummonFamiliar;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.sarenor.arsinstrumentum.network.Networking;
@@ -38,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.hollingsworth.arsnouveau.common.event.FamiliarEvents.getFamiliars;
 import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
 import static de.sarenor.arsinstrumentum.utils.IterableUtils.iterableToList;
 
@@ -59,12 +62,13 @@ public class WizardsArmarium extends ArsNouveauCurio {
         ArmariumStorage armariumStorage = new ArmariumStorage(
                 CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).get().getRight());
         ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
-                player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), Slots.getSlotForInt(choosenSlot));
+                player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), Slots.getSlotForInt(choosenSlot));
 
         setArmor(player, armariumSlot.getArmor());
         if (armariumStorage.isHotbarSwitch()) {
             setHotbar(player, armariumSlot.getHotbar());
         }
+        setFamiliar(player, armariumSlot.getFamiliarId());
         CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
     }
 
@@ -72,12 +76,13 @@ public class WizardsArmarium extends ArsNouveauCurio {
         ArmariumStorage armariumStorage = new ArmariumStorage(
                 CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).get().getRight());
         ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
-                player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), null);
+                player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), null);
 
         setArmor(player, armariumSlot.getArmor());
         if (armariumStorage.isHotbarSwitch()) {
             setHotbar(player, armariumSlot.getHotbar());
         }
+        setFamiliar(player, armariumSlot.getFamiliarId());
         CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
     }
 
@@ -109,6 +114,15 @@ public class WizardsArmarium extends ArsNouveauCurio {
                 inventory.setItem(i, ItemStack.EMPTY);
             }
         }
+    }
+
+    private static void setFamiliar(ServerPlayer player, String familiarHolderId) {
+        com.hollingsworth.arsnouveau.common.network.Networking.INSTANCE.sendToServer(new PacketSummonFamiliar(familiarHolderId, player.getId()));
+    }
+
+    private static String getFamiliarId(ServerPlayer player) {
+        return getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
+                .stream().map(FamiliarEntity::getHolderID).findFirst().orElse(null);
     }
 
     private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {

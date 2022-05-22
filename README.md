@@ -17,7 +17,6 @@ A small Addon to Ars Nouveau to provide a handful of utility items that should i
 Life can always happen, so no promises!
 
 - Upgrade Scroll of Save Starbuncle with functionality to copy from Starby Charms
-- Add Familiar Storage to Wizards Armarium
 - Make the Wizards Armarium Items directly accessible through a UI
 - Block/Blockinteraction to read the stored Configurations of the Scroll of Save Starbuncle and Runic Stone of Storage
 - Item to help locate/summon Starbuncles in big modpacks with many mobspawns (maybe expanded to other mobs)

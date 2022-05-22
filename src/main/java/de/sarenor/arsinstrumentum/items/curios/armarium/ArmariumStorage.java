@@ -63,13 +63,14 @@ public class ArmariumStorage {
         return isHotbarSwitch;
     }
 
-    public ArmariumSlot storeAndGet(List<ItemStack> armorItems, List<ItemStack> hotbarItems, List<ItemStack> spellfocus, Slots slotsToGet) {
+    public ArmariumSlot storeAndGet(List<ItemStack> armorItems, List<ItemStack> hotbarItems, List<ItemStack> spellfocus, String familiarId, Slots slotsToGet) {
         ArmariumSlot armariumSlot = armariumSlots.getOrDefault(currentSlot, new ArmariumSlot());
         armariumSlot.setArmor(armorItems);
         if (isHotbarSwitch) {
             armariumSlot.setHotbar(hotbarItems);
         }
         armariumSlot.setSpellfoci(spellfocus);
+        armariumSlot.setFamiliarId(familiarId);
         armariumSlots.put(currentSlot, armariumSlot);
 
         currentSlot = slotsToGet != null ? slotsToGet : Slots.getNextSlot(currentSlot);
