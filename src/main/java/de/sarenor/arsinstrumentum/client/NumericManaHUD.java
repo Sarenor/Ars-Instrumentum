@@ -32,11 +32,10 @@ public class NumericManaHUD extends GuiComponent {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderSpellHUD(final RenderGameOverlayEvent.Post event) {
         Player player = minecraft.player;
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL || player == null ||
-                Boolean.FALSE.equals(Client.SHOW_MANA_NUM.get())) {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL || player == null) {
             return;
         }
-        if (NumericCharm.hasCharm(player)){
+        if (NumericCharm.hasCharm(player) || Boolean.TRUE.equals(Client.SHOW_MANA_NUM.get())) {
             drawHUD(event.getMatrixStack(), player);
         }
     }
