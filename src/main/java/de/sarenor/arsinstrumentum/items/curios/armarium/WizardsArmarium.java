@@ -117,12 +117,14 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     private static void setFamiliar(ServerPlayer player, String familiarHolderId) {
-        com.hollingsworth.arsnouveau.common.network.Networking.INSTANCE.sendToServer(new PacketSummonFamiliar(familiarHolderId, player.getId()));
+        if(familiarHolderId != null && !familiarHolderId.equals("")) {
+            com.hollingsworth.arsnouveau.common.network.Networking.INSTANCE.sendToServer(new PacketSummonFamiliar(familiarHolderId, player.getId()));
+        }
     }
 
     private static String getFamiliarId(ServerPlayer player) {
         return getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
-                .stream().map(FamiliarEntity::getHolderID).findFirst().orElse(null);
+                .stream().map(FamiliarEntity::getHolderID).findFirst().orElse("");
     }
 
     private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {
