@@ -1,6 +1,7 @@
 package de.sarenor.arsinstrumentum.datagen;
 
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
+import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.data.DataGenerator;
 
@@ -26,6 +27,10 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
         add(SWITCH_ARMARIUM_SLOT_ID, "Switch Wizards Armarium");
         add(CHOOSE_ARMARIUM_SLOT_ID, "(Wizards Armarium) Toggle Selection HUD");
         add(NUMERIC_CHARM.get(), "Charm of Numeric Mana");
+        add(WizardsArmarium.SWITCHED_TO_NO_HOTBAR,"Wizards Armarium will not switch Hotbar Items");
+        add(WizardsArmarium.SWITCHED_TO_HOTBAR,"Wizards Armarium will switch Hotbar Items");
+        add(WizardsArmarium.HOTBAR_SWITCH_WARNING, "Remove Hotbar Items from Armarium before switching mode!");
         log.info("ArsInstrumentum: AddTranslation ended");
     }
+
 }

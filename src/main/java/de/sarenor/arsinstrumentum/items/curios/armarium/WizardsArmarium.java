@@ -16,7 +16,7 @@ import de.sarenor.arsinstrumentum.utils.CuriosUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -48,19 +48,21 @@ public class WizardsArmarium extends ArsNouveauCurio {
     public static final String WIZARDS_ARMARIUM_ID = "wizards_armarium";
     private static final int HOTBAR_SIZE = 9;
     private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private static final String SWITCHED_TO_NO_HOTBAR = "Wizards Armarium will not switch Hotbar Items";
-    private static final String SWITCHED_TO_HOTBAR = "Wizards Armarium will switch Hotbar Items";
+
+    public static final String HOTBAR_SWITCH_WARNING = "instrumentum.armarium.hotbar_warning";
+    public static final String SWITCHED_TO_NO_HOTBAR = "instrumentum.armarium.hotbar_no_switch";
+    public static final String SWITCHED_TO_HOTBAR = "instrumentum.armarium.hotbar_switch";
 
     @OnlyIn(Dist.CLIENT)
     public static void openSwitchRadialMenu(Player player) {
         ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).get().getRight());
+                CuriosApi.getCuriosHelper().findFirstCurio(player,WIZARDS_ARMARIUM.get()).get().stack());
         Minecraft.getInstance().setScreen(new GuiRadialMenu<>(getRadialMenuProvider(armariumStorage)));
     }
 
     public static void handleArmariumChoice(ServerPlayer player, int choosenSlot) {
         ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).get().getRight());
+                CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
         ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
                 player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), Slots.getSlotForInt(choosenSlot));
 
@@ -74,7 +76,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
 
     public static void handleArmariumSwitch(ServerPlayer player) {
         ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).get().getRight());
+                CuriosApi.getCuriosHelper().findFirstCurio(player,WIZARDS_ARMARIUM.get()).get().stack());
         ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
                 player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), null);
 
@@ -89,11 +91,10 @@ public class WizardsArmarium extends ArsNouveauCurio {
     public static void handleModeSwitch(ItemStack itemStack, Player player) {
         ArmariumStorage storage = new ArmariumStorage(itemStack);
         storage.switchIsHotbarSwitch();
-        if (storage.isHotbarSwitch()) {
-            PortUtil.sendMessage(player, new TextComponent(SWITCHED_TO_HOTBAR));
-        } else {
-            PortUtil.sendMessage(player, new TextComponent(SWITCHED_TO_NO_HOTBAR));
-        }
+        PortUtil.sendMessage(player, new TranslatableComponent(
+                storage.isHotbarSwitch() ? SWITCHED_TO_HOTBAR : SWITCHED_TO_NO_HOTBAR)
+        );
+
     }
 
     private static void setArmor(ServerPlayer player, List<ItemStack> armorItems) {

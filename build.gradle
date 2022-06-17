@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
         maven { url 'https://modmaven.dev/' }
         maven {
@@ -141,22 +140,22 @@ repositories {
         }
     }
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-    jcenter()
     mavenCentral()
     mavenLocal()
 }
+
 dependencies {
 
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.36'
-    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.2:[2.4.2.170]")
-    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.2:[2.4.2.170]")
+    runtimeOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.2:[2.5.0.216]")
+    compileOnly fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-1.18.2:[2.5.0.216]")
 
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
 
-    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.195:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.195")
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.6.3:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.6.3")
