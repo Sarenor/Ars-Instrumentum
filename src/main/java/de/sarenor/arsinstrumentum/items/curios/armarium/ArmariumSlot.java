@@ -32,7 +32,9 @@ public class ArmariumSlot {
         armariumSlot.setArmor(deserializeItemList(compoundTag, ARMARIUM_ARMOR_TAG));
         armariumSlot.setHotbar(deserializeItemList(compoundTag, ARMARIUM_HOTBAR_TAG));
         armariumSlot.setSpellfoci(deserializeItemList(compoundTag, ARMARIUM_SPELLFOCUS_TAG));
-        armariumSlot.setFamiliarId(compoundTag.getString(ARMARIUM_FAMILIAR_TAG));
+        if (compoundTag.contains(ARMARIUM_FAMILIAR_TAG)) {
+            armariumSlot.setFamiliarId(compoundTag.getString(ARMARIUM_FAMILIAR_TAG));
+        }
         return armariumSlot;
     }
 
@@ -41,7 +43,9 @@ public class ArmariumSlot {
         serialized.put(ARMARIUM_ARMOR_TAG, serializeItemList(armor));
         serialized.put(ARMARIUM_HOTBAR_TAG, serializeItemList(hotbar));
         serialized.put(ARMARIUM_SPELLFOCUS_TAG, serializeItemList(spellfoci));
-        serialized.putString(ARMARIUM_FAMILIAR_TAG, familiarId);
+        if (familiarId != null) {
+            serialized.putString(ARMARIUM_FAMILIAR_TAG, familiarId);
+        }
         return serialized;
     }
 

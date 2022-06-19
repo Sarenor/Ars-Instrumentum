@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -117,14 +118,17 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     private static void setFamiliar(ServerPlayer player, String familiarHolderId) {
-        if(familiarHolderId != null && !familiarHolderId.equals("")) {
+        if (familiarHolderId != null) {
             com.hollingsworth.arsnouveau.common.network.Networking.INSTANCE.sendToServer(new PacketSummonFamiliar(familiarHolderId, player.getId()));
+        } else {
+            getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
+                    .stream().findFirst().ifPresent(familiarEntity -> familiarEntity.remove(Entity.RemovalReason.DISCARDED));
         }
     }
 
     private static String getFamiliarId(ServerPlayer player) {
         return getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
-                .stream().map(FamiliarEntity::getHolderID).findFirst().orElse("");
+                .stream().map(FamiliarEntity::getHolderID).findFirst().orElse(null);
     }
 
     private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {
