@@ -2,9 +2,7 @@ package de.sarenor.arsinstrumentum.items.curios.armarium;
 
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
@@ -18,16 +16,16 @@ public class ArmariumStorage {
     private static final String CURRENT_SLOT = "current_slot";
     private static final String FLAVORTEXT = "flavortext"; //TODO: Actually write Flavortext
     private static final String IS_HOTBAR_SWITCH = "is_hotbar_switch";
-    private static final TextComponent WILL_SWITCH_HOTBAR = new TextComponent("Wizards Armarium will switch your Hotbar Items");
-    private static final TextComponent WONT_SWITCH_HOTBAR = new TextComponent("Wizards Armarium won't switch your Hotbar Items");
-    private static final TextComponent HOTBAR_WARNING = new TextComponent("Remove Hotbar Items from Armarium before switching mode!");
+    public static final TranslatableComponent WILL_SWITCH_HOTBAR = new TranslatableComponent(WizardsArmarium.SWITCHED_TO_HOTBAR);
+    public static final TranslatableComponent WONT_SWITCH_HOTBAR = new TranslatableComponent(WizardsArmarium.SWITCHED_TO_NO_HOTBAR);
+    public static final TranslatableComponent HOTBAR_WARNING = new TranslatableComponent(WizardsArmarium.HOTBAR_SWITCH_WARNING);
     private static final Style HOTBAR_WARNING_STYLE = Style.EMPTY.withColor(TextColor.fromRgb((int) Long.parseLong("AA0000", 16))).withUnderlined(true);
 
     private final Map<Slots, ArmariumSlot> armariumSlots = new HashMap<>();
     private Slots currentSlot;
-    private String flavorText = "";
+    private String flavorText;
     private ItemStack armarium;
-    private boolean isHotbarSwitch = true;
+    private boolean isHotbarSwitch;
 
     public ArmariumStorage(ItemStack armarium) {
         this(armarium.getOrCreateTag());
@@ -79,7 +77,7 @@ public class ArmariumStorage {
         return armariumSlots.getOrDefault(currentSlot, new ArmariumSlot());
     }
 
-    public List<TextComponent> getTooltip() {
+    public List<BaseComponent> getTooltip() {
         HOTBAR_WARNING.setStyle(HOTBAR_WARNING_STYLE);
         if (!armariumSlots.isEmpty()) {
             return List.of(HOTBAR_WARNING,

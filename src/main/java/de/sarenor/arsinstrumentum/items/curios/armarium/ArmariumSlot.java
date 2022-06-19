@@ -25,7 +25,7 @@ public class ArmariumSlot {
     private List<ItemStack> armor = new ArrayList<>();
     private List<ItemStack> hotbar = new ArrayList<>();
     private List<ItemStack> spellfoci = new ArrayList<>();
-    private String familiarId = null;
+    private String familiarId = "";
 
     public static ArmariumSlot deserialize(CompoundTag compoundTag) {
         ArmariumSlot armariumSlot = new ArmariumSlot();
