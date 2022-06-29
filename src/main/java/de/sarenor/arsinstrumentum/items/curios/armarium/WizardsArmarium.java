@@ -1,10 +1,10 @@
 package de.sarenor.arsinstrumentum.items.curios.armarium;
 
 import com.hollingsworth.arsnouveau.api.item.ArsNouveauCurio;
-import com.hollingsworth.arsnouveau.client.gui.RadialMenu.GuiRadialMenu;
-import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenu;
-import com.hollingsworth.arsnouveau.client.gui.RadialMenu.RadialMenuSlot;
-import com.hollingsworth.arsnouveau.client.gui.RadialMenu.SecondaryIconPosition;
+import com.hollingsworth.arsnouveau.client.gui.radial_menu.GuiRadialMenu;
+import com.hollingsworth.arsnouveau.client.gui.radial_menu.RadialMenu;
+import com.hollingsworth.arsnouveau.client.gui.radial_menu.RadialMenuSlot;
+import com.hollingsworth.arsnouveau.client.gui.radial_menu.SecondaryIconPosition;
 import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
 import com.hollingsworth.arsnouveau.common.entity.familiar.FamiliarEntity;
 import com.hollingsworth.arsnouveau.common.network.PacketSummonFamiliar;
@@ -16,7 +16,7 @@ import de.sarenor.arsinstrumentum.utils.CuriosUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -92,7 +92,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
     public static void handleModeSwitch(ItemStack itemStack, Player player) {
         ArmariumStorage storage = new ArmariumStorage(itemStack);
         storage.switchIsHotbarSwitch();
-        PortUtil.sendMessage(player, new TranslatableComponent(
+        PortUtil.sendMessage(player, Component.translatable(
                 storage.isHotbarSwitch() ? SWITCHED_TO_HOTBAR : SWITCHED_TO_NO_HOTBAR)
         );
 
@@ -118,7 +118,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
         }
     }
 
-    private static void setFamiliar(ServerPlayer player, String familiarHolderId) {
+    private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId) {
         if (familiarHolderId != null) {
             com.hollingsworth.arsnouveau.common.network.Networking.INSTANCE.sendToServer(new PacketSummonFamiliar(familiarHolderId, player.getId()));
         } else {
@@ -127,7 +127,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
         }
     }
 
-    private static String getFamiliarId(ServerPlayer player) {
+    private static ResourceLocation getFamiliarId(ServerPlayer player) {
         return getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
                 .stream().map(FamiliarEntity::getHolderID).findFirst().orElse(null);
     }
@@ -184,8 +184,4 @@ public class WizardsArmarium extends ArsNouveauCurio {
         tooltip.addAll(armariumStorage.getTooltip());
     }
 
-    @Override
-    public void wearableTick(LivingEntity livingEntity) {
-        // No op
-    }
 }

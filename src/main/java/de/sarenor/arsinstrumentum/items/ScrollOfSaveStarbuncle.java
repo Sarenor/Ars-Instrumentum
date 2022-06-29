@@ -7,7 +7,6 @@ import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -78,7 +77,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag p_77624_4_) {
         CompoundTag scrollTag = stack.getOrCreateTag();
         if (scrollTag.contains(SCROLL_OF_SAVE_TAG_ID)) {
-            tooltip.add(new TextComponent(scrollTag.getCompound(SCROLL_OF_SAVE_TAG_ID).getString(TOOLTIP)));
+            tooltip.add(Component.literal(scrollTag.getCompound(SCROLL_OF_SAVE_TAG_ID).getString(TOOLTIP)));
         }
     }
 
@@ -93,7 +92,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
                 + starbuncle.TO_LIST.size() + " Deposit-Locations");
         scrollTag.put(SCROLL_OF_SAVE_TAG_ID, configTag);
         scroll.setTag(scrollTag);
-        PortUtil.sendMessage(player, new TextComponent(SAVED_CONFIGURATION));
+        PortUtil.sendMessage(player, Component.literal(SAVED_CONFIGURATION));
     }
 
     private void apply(ItemStack scroll, Starbuncle starbuncle, Player player) {
@@ -106,7 +105,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
             starbuncle.ignoreItems = deserializeItemList(configTag, IGNORED_ITEMS);
             starbuncle.getEntityData().set(FROM_POS_SIZE, starbuncle.FROM_LIST.size());
             starbuncle.getEntityData().set(TO_POS_SIZE, starbuncle.TO_LIST.size());
-            PortUtil.sendMessage(player, new TextComponent(APPLIED_CONFIGURATION));
+            PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
         }
     }
 
@@ -114,7 +113,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
         CompoundTag scrollTag = scroll.getOrCreateTag();
         scrollTag.remove(SCROLL_OF_SAVE_TAG_ID);
         scroll.setTag(scrollTag);
-        PortUtil.sendMessage(player, new TextComponent(CLEARED_CONFIGURATION));
+        PortUtil.sendMessage(player, Component.literal(CLEARED_CONFIGURATION));
     }
 
 

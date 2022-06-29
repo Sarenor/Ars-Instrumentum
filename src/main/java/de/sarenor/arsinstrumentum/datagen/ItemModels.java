@@ -12,6 +12,8 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
+import static com.hollingsworth.arsnouveau.api.RegistryHelper.getRegistryName;
+
 @Log4j2
 public class ItemModels extends ItemModelProvider {
 
@@ -24,7 +26,7 @@ public class ItemModels extends ItemModelProvider {
         log.info("ArsInstrumentum: RegisterItemModels started");
         for (RegistryObject<Item> item : Registration.ITEMS.getEntries()) {
             try {
-                getBuilder(item.get().getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", itemTexture(item.get()));
+                getBuilder(getRegistryName(item.get()).getPath()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", itemTexture(item.get()));
             } catch (Exception e) {
                 System.out.println("No texture for " + item.toString());
             }
@@ -38,6 +40,6 @@ public class ItemModels extends ItemModelProvider {
     }
 
     private ResourceLocation registryName(final Item item) {
-        return Preconditions.checkNotNull(item.getRegistryName(), "Item %s has a null registry name", item);
+        return Preconditions.checkNotNull(getRegistryName(item), "Item %s has a null registry name", item);
     }
 }

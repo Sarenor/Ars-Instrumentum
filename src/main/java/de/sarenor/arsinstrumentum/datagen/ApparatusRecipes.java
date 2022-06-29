@@ -9,9 +9,9 @@ import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.setup.ItemsRegistry;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import lombok.extern.log4j.Log4j2;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
@@ -38,15 +38,15 @@ public class ApparatusRecipes extends ApparatusRecipeProvider {
     }
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
         log.info("ArsInstrumentum: Recipe-Generation started");
         addEntries();
         Path output = this.generator.getOutputFolder();
         for (IEnchantingRecipe g : recipes) {
-            if (g instanceof EnchantingApparatusRecipe) {
+            if (g instanceof EnchantingApparatusRecipe apparatusRecipe) {
                 System.out.println(g);
-                Path path = getRecipePath(output, ((EnchantingApparatusRecipe) g).getId().getPath());
-                DataProvider.save(GSON, cache, ((EnchantingApparatusRecipe) g).asRecipe(), path);
+                Path path = getRecipePath(output, apparatusRecipe.getId().getPath());
+                DataProvider.saveStable(cache, apparatusRecipe.asRecipe(), path);
             }
         }
         log.info("ArsInstrumentum: Recipe-Generation ended");

@@ -3,6 +3,7 @@ package de.sarenor.arsinstrumentum.items.curios.armarium;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Collections;
@@ -16,9 +17,9 @@ public class ArmariumStorage {
     private static final String CURRENT_SLOT = "current_slot";
     private static final String FLAVORTEXT = "flavortext"; //TODO: Actually write Flavortext
     private static final String IS_HOTBAR_SWITCH = "is_hotbar_switch";
-    public static final TranslatableComponent WILL_SWITCH_HOTBAR = new TranslatableComponent(WizardsArmarium.SWITCHED_TO_HOTBAR);
-    public static final TranslatableComponent WONT_SWITCH_HOTBAR = new TranslatableComponent(WizardsArmarium.SWITCHED_TO_NO_HOTBAR);
-    public static final TranslatableComponent HOTBAR_WARNING = new TranslatableComponent(WizardsArmarium.HOTBAR_SWITCH_WARNING);
+    public static final MutableComponent WILL_SWITCH_HOTBAR = Component.translatable(WizardsArmarium.SWITCHED_TO_HOTBAR);
+    public static final MutableComponent WONT_SWITCH_HOTBAR = Component.translatable(WizardsArmarium.SWITCHED_TO_NO_HOTBAR);
+    public static final MutableComponent HOTBAR_WARNING = Component.translatable(WizardsArmarium.HOTBAR_SWITCH_WARNING);
     private static final Style HOTBAR_WARNING_STYLE = Style.EMPTY.withColor(TextColor.fromRgb((int) Long.parseLong("AA0000", 16))).withUnderlined(true);
 
     private final Map<Slots, ArmariumSlot> armariumSlots = new HashMap<>();
@@ -61,7 +62,7 @@ public class ArmariumStorage {
         return isHotbarSwitch;
     }
 
-    public ArmariumSlot storeAndGet(List<ItemStack> armorItems, List<ItemStack> hotbarItems, List<ItemStack> spellfocus, String familiarId, Slots slotsToGet) {
+    public ArmariumSlot storeAndGet(List<ItemStack> armorItems, List<ItemStack> hotbarItems, List<ItemStack> spellfocus, ResourceLocation familiarId, Slots slotsToGet) {
         ArmariumSlot armariumSlot = armariumSlots.getOrDefault(currentSlot, new ArmariumSlot());
         armariumSlot.setArmor(armorItems);
         if (isHotbarSwitch) {
@@ -77,12 +78,12 @@ public class ArmariumStorage {
         return armariumSlots.getOrDefault(currentSlot, new ArmariumSlot());
     }
 
-    public List<BaseComponent> getTooltip() {
+    public List<Component> getTooltip() {
         HOTBAR_WARNING.setStyle(HOTBAR_WARNING_STYLE);
         if (!armariumSlots.isEmpty()) {
             return List.of(HOTBAR_WARNING,
                     isHotbarSwitch ? WILL_SWITCH_HOTBAR : WONT_SWITCH_HOTBAR,
-                    new TextComponent("Next slots armor is: " + armariumSlots.get(Slots.getNextSlot(currentSlot)).listArmor()));
+                    Component.literal("Next slots armor is: " + armariumSlots.get(Slots.getNextSlot(currentSlot)).listArmor()));
         } else {
             return List.of(HOTBAR_WARNING, isHotbarSwitch ? WILL_SWITCH_HOTBAR : WONT_SWITCH_HOTBAR);
         }
