@@ -11,7 +11,6 @@ import com.hollingsworth.arsnouveau.common.items.SpellParchment;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -44,7 +43,7 @@ public class CopyPasteSpellScroll extends ModItem implements ICasterTool {
                 offhandSpellcaster.setSpell(copyPasteSpellcaster.getSpell());
                 offhandSpellcaster.setColor(copyPasteSpellcaster.getColor());
                 offhandSpellcaster.setSpellName(copyPasteSpellcaster.getSpellName());
-                PortUtil.sendMessage(player, new TextComponent(APPLIED_CONFIGURATION));
+                PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
                 return new InteractionResultHolder<>(InteractionResult.SUCCESS, usedCopyPasteScroll);
             } else {
                 return new InteractionResultHolder<>(InteractionResult.PASS, usedCopyPasteScroll);
@@ -95,8 +94,8 @@ public class CopyPasteSpellScroll extends ModItem implements ICasterTool {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip2, TooltipFlag flagIn) {
         ISpellCaster copyPasteSpellcaster = this.getSpellCaster(stack);
-        tooltip2.add(new TextComponent("Inscribed Spell: " + copyPasteSpellcaster.getSpellName()));
-        tooltip2.add(new TextComponent(copyPasteSpellcaster.getSpell().getDisplayString()));
+        tooltip2.add(Component.literal("Inscribed Spell: " + copyPasteSpellcaster.getSpellName()));
+        tooltip2.add(Component.literal(copyPasteSpellcaster.getSpell().getDisplayString()));
         super.appendHoverText(stack, worldIn, tooltip2, flagIn);
     }
 }

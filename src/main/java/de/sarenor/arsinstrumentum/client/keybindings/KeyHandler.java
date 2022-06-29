@@ -1,6 +1,6 @@
 package de.sarenor.arsinstrumentum.client.keybindings;
 
-import com.hollingsworth.arsnouveau.client.gui.RadialMenu.GuiRadialMenu;
+import com.hollingsworth.arsnouveau.client.gui.radial_menu.GuiRadialMenu;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
 import de.sarenor.arsinstrumentum.network.Networking;

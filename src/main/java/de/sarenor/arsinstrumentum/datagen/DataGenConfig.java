@@ -15,11 +15,11 @@ public class DataGenConfig {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         log.info("Ars Instrumentum: Data Generation started.");
-        generator.addProvider(new ApparatusRecipes(generator));
-        generator.addProvider(new Recipes(generator));
-        generator.addProvider(new LanguageProvider(generator, "en_us"));
-        generator.addProvider(new ItemModels(generator, event.getExistingFileHelper()));
-        generator.addProvider(new ImbuementRecipes(generator));
+        generator.addProvider(event.includeServer(),new ApparatusRecipes(generator));
+        generator.addProvider(event.includeServer(),new Recipes(generator));
+        generator.addProvider(event.includeClient(),new LanguageProvider(generator, "en_us"));
+        generator.addProvider(event.includeClient(),new ItemModels(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(),new ImbuementRecipes(generator));
         log.info("Ars Instrumentum: Data Generation ended.");
     }
 }

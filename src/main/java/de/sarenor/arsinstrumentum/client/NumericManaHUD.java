@@ -36,7 +36,7 @@ public class NumericManaHUD extends GuiComponent {
             return;
         }
         if (NumericCharm.hasCharm(player) || Boolean.TRUE.equals(Client.SHOW_MANA_NUM.get())) {
-            drawHUD(event.getMatrixStack(), player);
+            drawHUD(event.getPoseStack(), player);
         }
     }
 

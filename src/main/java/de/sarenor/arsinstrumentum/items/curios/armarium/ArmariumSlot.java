@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class ArmariumSlot {
     private List<ItemStack> armor = new ArrayList<>();
     private List<ItemStack> hotbar = new ArrayList<>();
     private List<ItemStack> spellfoci = new ArrayList<>();
-    private String familiarId = "";
+    private ResourceLocation familiarId = new ResourceLocation("");
 
     public static ArmariumSlot deserialize(CompoundTag compoundTag) {
         ArmariumSlot armariumSlot = new ArmariumSlot();
@@ -33,10 +34,11 @@ public class ArmariumSlot {
         armariumSlot.setHotbar(deserializeItemList(compoundTag, ARMARIUM_HOTBAR_TAG));
         armariumSlot.setSpellfoci(deserializeItemList(compoundTag, ARMARIUM_SPELLFOCUS_TAG));
         if (compoundTag.contains(ARMARIUM_FAMILIAR_TAG)) {
-            armariumSlot.setFamiliarId(compoundTag.getString(ARMARIUM_FAMILIAR_TAG));
+            armariumSlot.setFamiliarId(ResourceLocation.tryParse(compoundTag.getString(ARMARIUM_FAMILIAR_TAG)));
         }
         return armariumSlot;
     }
+
 
     public CompoundTag serialize() {
         CompoundTag serialized = new CompoundTag();
@@ -44,7 +46,7 @@ public class ArmariumSlot {
         serialized.put(ARMARIUM_HOTBAR_TAG, serializeItemList(hotbar));
         serialized.put(ARMARIUM_SPELLFOCUS_TAG, serializeItemList(spellfoci));
         if (familiarId != null) {
-            serialized.putString(ARMARIUM_FAMILIAR_TAG, familiarId);
+            serialized.putString(ARMARIUM_FAMILIAR_TAG, familiarId.toString());
         }
         return serialized;
     }
