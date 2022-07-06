@@ -32,7 +32,7 @@ public class WizardsArmariumChoiceMessage {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null && CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).isPresent()) {
-                WizardsArmarium.handleArmariumChoice(player, choosenSlot);
+                WizardsArmarium.handleArmariumChoice(player, choosenSlot, ctx);
             }
         });
         ctx.get().setPacketHandled(true);

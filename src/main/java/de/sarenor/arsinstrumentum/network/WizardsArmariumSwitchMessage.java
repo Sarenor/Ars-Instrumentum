@@ -25,7 +25,7 @@ public class WizardsArmariumSwitchMessage {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null && CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).isPresent()) {
-                WizardsArmarium.handleArmariumSwitch(player);
+                WizardsArmarium.handleArmariumSwitch(player, ctx);
             }
         });
         ctx.get().setPacketHandled(true);

@@ -33,12 +33,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.NetworkEvent;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.hollingsworth.arsnouveau.common.event.FamiliarEvents.getFamiliars;
@@ -47,21 +49,20 @@ import static de.sarenor.arsinstrumentum.utils.IterableUtils.iterableToList;
 
 public class WizardsArmarium extends ArsNouveauCurio {
     public static final String WIZARDS_ARMARIUM_ID = "wizards_armarium";
-    private static final int HOTBAR_SIZE = 9;
-    private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-
     public static final String HOTBAR_SWITCH_WARNING = "instrumentum.armarium.hotbar_warning";
     public static final String SWITCHED_TO_NO_HOTBAR = "instrumentum.armarium.hotbar_no_switch";
     public static final String SWITCHED_TO_HOTBAR = "instrumentum.armarium.hotbar_switch";
+    private static final int HOTBAR_SIZE = 9;
+    private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     @OnlyIn(Dist.CLIENT)
     public static void openSwitchRadialMenu(Player player) {
         ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findFirstCurio(player,WIZARDS_ARMARIUM.get()).get().stack());
+                CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
         Minecraft.getInstance().setScreen(new GuiRadialMenu<>(getRadialMenuProvider(armariumStorage)));
     }
 
-    public static void handleArmariumChoice(ServerPlayer player, int choosenSlot) {
+    public static void handleArmariumChoice(ServerPlayer player, int choosenSlot, Supplier<NetworkEvent.Context> ctx) {
         ArmariumStorage armariumStorage = new ArmariumStorage(
                 CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
         ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
@@ -71,13 +72,13 @@ public class WizardsArmarium extends ArsNouveauCurio {
         if (armariumStorage.isHotbarSwitch()) {
             setHotbar(player, armariumSlot.getHotbar());
         }
-        setFamiliar(player, armariumSlot.getFamiliarId());
+        setFamiliar(player, armariumSlot.getFamiliarId(), ctx);
         CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
     }
 
-    public static void handleArmariumSwitch(ServerPlayer player) {
+    public static void handleArmariumSwitch(ServerPlayer player, Supplier<NetworkEvent.Context> ctx) {
         ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findFirstCurio(player,WIZARDS_ARMARIUM.get()).get().stack());
+                CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
         ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
                 player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), null);
 
@@ -85,7 +86,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
         if (armariumStorage.isHotbarSwitch()) {
             setHotbar(player, armariumSlot.getHotbar());
         }
-        setFamiliar(player, armariumSlot.getFamiliarId());
+        setFamiliar(player, armariumSlot.getFamiliarId(), ctx);
         CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
     }
 
@@ -118,9 +119,9 @@ public class WizardsArmarium extends ArsNouveauCurio {
         }
     }
 
-    private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId) {
+    private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId, Supplier<NetworkEvent.Context> ctx) {
         if (familiarHolderId != null) {
-            com.hollingsworth.arsnouveau.common.network.Networking.INSTANCE.sendToServer(new PacketSummonFamiliar(familiarHolderId, player.getId()));
+            new PacketSummonFamiliar(familiarHolderId, player.getId()).handle(ctx);
         } else {
             getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
                     .stream().findFirst().ifPresent(familiarEntity -> familiarEntity.remove(Entity.RemovalReason.DISCARDED));
