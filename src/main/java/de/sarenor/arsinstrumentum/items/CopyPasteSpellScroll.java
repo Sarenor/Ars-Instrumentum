@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class CopyPasteSpellScroll extends ModItem implements ICasterTool {
 
     public static final String COPY_PASTE_SPELL_SCROLL = "copy_paste_spell_scroll";

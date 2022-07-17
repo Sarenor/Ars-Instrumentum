@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,9 +30,9 @@ public class NumericManaHUD extends GuiComponent {
     private static final Minecraft minecraft = Minecraft.getInstance();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void renderSpellHUD(final RenderGameOverlayEvent.Post event) {
+    public static void renderSpellHUD(final RenderGuiOverlayEvent.Post event) {
         Player player = minecraft.player;
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL || player == null) {
+        if (player == null) {
             return;
         }
         if (NumericCharm.hasCharm(player) || Boolean.TRUE.equals(Client.SHOW_MANA_NUM.get())) {

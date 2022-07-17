@@ -5,11 +5,10 @@ import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -24,10 +23,8 @@ public class ModKeyBindings {
     public static final KeyMapping CHOOSE_ARMARIUM_SLOT = new KeyMapping(CHOOSE_ARMARIUM_SLOT_ID, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, CATEGORY);
 
     @SubscribeEvent
-    public static void registerKeyBindings(final FMLClientSetupEvent event) {
-        log.info("ArsInstrumentum: Keybindings started");
-        ClientRegistry.registerKeyBinding(SWITCH_ARMARIUM_SLOT);
-        ClientRegistry.registerKeyBinding(CHOOSE_ARMARIUM_SLOT);
-        log.info("ArsInstrumentum: Keybindings ended");
+    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
+        event.register(SWITCH_ARMARIUM_SLOT);
+        event.register(CHOOSE_ARMARIUM_SLOT);
     }
 }

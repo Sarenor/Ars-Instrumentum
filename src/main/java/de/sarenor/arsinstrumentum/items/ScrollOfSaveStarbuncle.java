@@ -20,9 +20,8 @@ import net.minecraft.world.level.LevelReader;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static com.hollingsworth.arsnouveau.common.entity.Starbuncle.FROM_POS_SIZE;
-import static com.hollingsworth.arsnouveau.common.entity.Starbuncle.TO_POS_SIZE;
-import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.*;
+import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.deserializeBlockPosList;
+import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.serializeBlockPosList;
 
 public class ScrollOfSaveStarbuncle extends ModItem {
 
@@ -33,8 +32,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
 
     private static final String FROM_LIST = "from_list";
     private static final String TO_LIST = "to_list";
-    private static final String ALLOWED_ITEMS = "allowed_items";
-    private static final String IGNORED_ITEMS = "denied_items";
+    private static final String BEHAVIOR_TAG = "behavior_tag";
     private static final String TOOLTIP = "tooltip";
     private static final String SCROLL_OF_SAVE_TAG_ID = "scroll_of_save_starbuncle_tag";
 
@@ -86,8 +84,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
         CompoundTag configTag = new CompoundTag();
         configTag.put(FROM_LIST, serializeBlockPosList(starbuncle.data.FROM_LIST));
         configTag.put(TO_LIST, serializeBlockPosList(starbuncle.data.TO_LIST));
-        configTag.put(ALLOWED_ITEMS, serializeItemList(starbuncle.data.allowedItems));
-        configTag.put(IGNORED_ITEMS, serializeItemList(starbuncle.data.ignoreItems));
+        configTag.put(BEHAVIOR_TAG, starbuncle.data.behaviorTag);
         configTag.putString(TOOLTIP, "Stored Config with " + starbuncle.data.FROM_LIST.size() + " Take-Locations and "
                 + starbuncle.data.TO_LIST.size() + " Deposit-Locations");
         scrollTag.put(SCROLL_OF_SAVE_TAG_ID, configTag);
@@ -101,10 +98,9 @@ public class ScrollOfSaveStarbuncle extends ModItem {
             CompoundTag configTag = scrollTag.getCompound(SCROLL_OF_SAVE_TAG_ID);
             starbuncle.data.FROM_LIST = deserializeBlockPosList(configTag, FROM_LIST);
             starbuncle.data.TO_LIST = deserializeBlockPosList(configTag, TO_LIST);
-            starbuncle.data.allowedItems = deserializeItemList(configTag, ALLOWED_ITEMS);
-            starbuncle.data.ignoreItems = deserializeItemList(configTag, IGNORED_ITEMS);
-            starbuncle.getEntityData().set(FROM_POS_SIZE, starbuncle.data.FROM_LIST.size());
-            starbuncle.getEntityData().set(TO_POS_SIZE, starbuncle.data.TO_LIST.size());
+            if (configTag.contains(BEHAVIOR_TAG)) {
+                starbuncle.data.behaviorTag = configTag.getCompound(BEHAVIOR_TAG);
+            }
             PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
         }
     }

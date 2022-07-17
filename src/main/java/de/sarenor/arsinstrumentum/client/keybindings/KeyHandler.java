@@ -45,7 +45,7 @@ public class KeyHandler {
     }
 
     @SubscribeEvent
-    public static void mouseEvent(final InputEvent.MouseInputEvent event) {
+    public static void mouseEvent(final InputEvent.MouseButton.Post event) {
         if (MINECRAFT.player == null || MINECRAFT.screen != null || event.getAction() != 1) {
             return;
         }
@@ -53,7 +53,7 @@ public class KeyHandler {
     }
 
     @SubscribeEvent
-    public static void keyEvent(final InputEvent.KeyInputEvent event) {
+    public static void keyEvent(final InputEvent.Key event) {
         if (MINECRAFT.player == null || MINECRAFT.screen != null || event.getAction() != 1) {
             return;
         }

@@ -123,7 +123,6 @@ public class RunicStorageStone extends ModItem {
             }
         }
         PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
-        relaySplitterTile.update();
     }
 
     private void applyArcaneRelay(CompoundTag configTag, RelayTile relayTile, Player player) {
@@ -141,7 +140,6 @@ public class RunicStorageStone extends ModItem {
         }
         relayTile.setSendTo(to);
         relayTile.setTakeFrom(from);
-        relayTile.update();
         PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
     }
 

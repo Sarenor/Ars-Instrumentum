@@ -27,13 +27,15 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/ForgeUpdatesRemapper/main/remapper.gradle'
+
 
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 
-version = '3.0.2'
+version = '3.0.3'
 group = 'de.sarenor.arsinstrumentum' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'ars_instrumentum-1.19.0'
 
@@ -158,9 +160,9 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curio_version}")
-    implementation fg.deobf("vazkii.patchouli:Patchouli:${mc_version}-73")
+    implementation fg.deobf("vazkii.patchouli:Patchouli:${mc_version}-75")
 
-    implementation /*runtimeOnly*/ fg.deobf("com.github.glitchfiend:TerraBlender-forge:${mc_version}-2.0.0.112")
+    implementation /*runtimeOnly*/ fg.deobf("com.github.glitchfiend:TerraBlender-forge:${mc_version}-2.0.0.120")
 
 
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"

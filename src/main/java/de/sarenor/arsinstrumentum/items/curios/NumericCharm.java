@@ -6,6 +6,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class NumericCharm extends Item implements ICurioItem {
     public NumericCharm(Properties pProperties) {
         super(pProperties);
