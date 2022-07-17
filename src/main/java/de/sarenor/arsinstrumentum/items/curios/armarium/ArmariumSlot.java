@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.deserializeItemList;
-import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.serializeItemList;
+import static de.sarenor.arsinstrumentum.utils.SerializationUtils.deserializeItemList;
+import static de.sarenor.arsinstrumentum.utils.SerializationUtils.serializeItemList;
 
 @Getter
 @Setter

@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SerializationUtiils {
+public class SerializationUtils {
 
     private static final int COMPOUND_TAG_TYPE = 10;
     private static final String X = "x";

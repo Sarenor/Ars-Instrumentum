@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.*;
+import static de.sarenor.arsinstrumentum.utils.SerializationUtils.*;
 
 public class RunicStorageStone extends ModItem {
     public static final String RUNIC_STORAGE_STONE_ID = "runic_storage_stone";

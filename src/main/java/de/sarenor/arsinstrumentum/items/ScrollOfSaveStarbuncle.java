@@ -20,9 +20,6 @@ import net.minecraft.world.level.LevelReader;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.deserializeBlockPosList;
-import static de.sarenor.arsinstrumentum.utils.SerializationUtiils.serializeBlockPosList;
-
 public class ScrollOfSaveStarbuncle extends ModItem {
 
     public static final String SCROLL_OF_SAVE_STARBUNCLE_ID = "scroll_of_save_starbuncle";
@@ -30,9 +27,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     public static final String APPLIED_CONFIGURATION = "Applied Starbuncle configuration";
     public static final String CLEARED_CONFIGURATION = "Cleared savedStarbuncle configuration";
 
-    private static final String FROM_LIST = "from_list";
-    private static final String TO_LIST = "to_list";
-    private static final String BEHAVIOR_TAG = "behavior_tag";
+    private static final String DATA_TAG = "data_tag";
     private static final String TOOLTIP = "tooltip";
     private static final String SCROLL_OF_SAVE_TAG_ID = "scroll_of_save_starbuncle_tag";
 
@@ -82,11 +77,10 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     private void store(ItemStack scroll, Starbuncle starbuncle, Player player) {
         CompoundTag scrollTag = scroll.getOrCreateTag();
         CompoundTag configTag = new CompoundTag();
-        configTag.put(FROM_LIST, serializeBlockPosList(starbuncle.data.FROM_LIST));
-        configTag.put(TO_LIST, serializeBlockPosList(starbuncle.data.TO_LIST));
-        configTag.put(BEHAVIOR_TAG, starbuncle.data.behaviorTag);
-        configTag.putString(TOOLTIP, "Stored Config with " + starbuncle.data.FROM_LIST.size() + " Take-Locations and "
-                + starbuncle.data.TO_LIST.size() + " Deposit-Locations");
+        CompoundTag starbyBehavior = starbuncle.data.toTag(starbuncle, new CompoundTag());
+        configTag.put(DATA_TAG, starbyBehavior);
+        //configTag.putString(TOOLTIP, "Stored Config with " + starbuncle.data.size() + " Take-Locations and "
+        //        + starbuncle.data.TO_LIST.size() + " Deposit-Locations");
         scrollTag.put(SCROLL_OF_SAVE_TAG_ID, configTag);
         scroll.setTag(scrollTag);
         PortUtil.sendMessage(player, Component.literal(SAVED_CONFIGURATION));
@@ -96,11 +90,10 @@ public class ScrollOfSaveStarbuncle extends ModItem {
         CompoundTag scrollTag = scroll.getOrCreateTag();
         if (scrollTag.contains(SCROLL_OF_SAVE_TAG_ID)) {
             CompoundTag configTag = scrollTag.getCompound(SCROLL_OF_SAVE_TAG_ID);
-            starbuncle.data.FROM_LIST = deserializeBlockPosList(configTag, FROM_LIST);
-            starbuncle.data.TO_LIST = deserializeBlockPosList(configTag, TO_LIST);
-            if (configTag.contains(BEHAVIOR_TAG)) {
-                starbuncle.data.behaviorTag = configTag.getCompound(BEHAVIOR_TAG);
+            if (configTag.contains(DATA_TAG)) {
+                starbuncle.data = new Starbuncle.StarbuncleData(configTag.getCompound(DATA_TAG));
             }
+            starbuncle.restoreFromTag();
             PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
         }
     }
