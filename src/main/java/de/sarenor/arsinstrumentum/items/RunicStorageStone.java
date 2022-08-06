@@ -45,6 +45,75 @@ public class RunicStorageStone extends ModItem {
         super((new Properties()).stacksTo(1).tab(ArsNouveau.itemGroup));
     }
 
+    public static void apply(ItemStack stone, RelayTile relayTile, Player player) {
+        CompoundTag stoneTag = stone.getOrCreateTag();
+        if (stoneTag.contains(RUNIC_STORAGE_STONE_TAG_ID)) {
+            CompoundTag configTag = stoneTag.getCompound(RUNIC_STORAGE_STONE_TAG_ID);
+            if (RelayType.valueOf(configTag.getString(RELAY_TYPE)) == RelayType.SPLITTER) {
+                if (relayTile instanceof RelaySplitterTile relaySplitterTile) {
+                    applySplitterRelay(configTag, relaySplitterTile, player);
+                } else {
+                    if (player != null) {
+                        PortUtil.sendMessage(player, Component.literal(CANT_APPLY_SPLITTER_CONFIGURATION_TO_ARCANE));
+                    }
+                }
+            } else {
+                if (!(relayTile instanceof RelaySplitterTile)) {
+                    applyArcaneRelay(configTag, relayTile, player);
+                } else {
+                    if (player != null) {
+                        PortUtil.sendMessage(player, Component.literal(CANT_APPLY_ARCANE_CONFIGURATION_TO_SPLITTER));
+                    }
+                }
+            }
+        } else {
+            if (player != null) {
+                PortUtil.sendMessage(player, Component.literal(CANT_APPLY_EMPTY_CONFIGURATION));
+            }
+        }
+    }
+
+    private static void applySplitterRelay(CompoundTag configTag, RelaySplitterTile relaySplitterTile, Player player) {
+        List<BlockPos> toList = deserializeBlockPosList(configTag, TO_CONFIGURATION);
+        List<BlockPos> fromList = deserializeBlockPosList(configTag, FROM_CONFIGURATION);
+
+        for (BlockPos to : toList) {
+            if (relaySplitterTile.closeEnough(to)) {
+                relaySplitterTile.setSendTo(to);
+            } else {
+                PortUtil.sendMessage(player, Component.literal("Block " + BlockPosUtils.toString(to) + " is to far"
+                        + " away from the Relay and could not be added to Deposit-Locations"));
+            }
+        }
+        for (BlockPos from : fromList) {
+            if (relaySplitterTile.closeEnough(from)) {
+                relaySplitterTile.setTakeFrom(from);
+            } else {
+                PortUtil.sendMessage(player, Component.literal("Block " + BlockPosUtils.toString(from) + " is to far"
+                        + " away from the Relay and could not be added to Take-Locations"));
+            }
+        }
+        PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
+    }
+
+    private static void applyArcaneRelay(CompoundTag configTag, RelayTile relayTile, Player player) {
+        BlockPos to = deserializeBlockPos(configTag.getCompound(TO_CONFIGURATION));
+        BlockPos from = deserializeBlockPos(configTag.getCompound(FROM_CONFIGURATION));
+        if (!relayTile.closeEnough(to)) {
+            PortUtil.sendMessage(player, Component.literal("Deposit-Location " + BlockPosUtils.toString(to) + " is to far away."
+                    + " No configuration has been applied"));
+            return;
+        }
+        if (!relayTile.closeEnough(from)) {
+            PortUtil.sendMessage(player, Component.literal("Take-Location " + BlockPosUtils.toString(from) + " is to far away."
+                    + " No configuration has been applied"));
+            return;
+        }
+        relayTile.setSendTo(to);
+        relayTile.setTakeFrom(from);
+        PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         if (context.getLevel().isClientSide || context.getPlayer() == null) {
@@ -78,69 +147,6 @@ public class RunicStorageStone extends ModItem {
         if (scrollTag.contains(RUNIC_STORAGE_STONE_TAG_ID)) {
             tooltip.add(Component.literal(scrollTag.getCompound(RUNIC_STORAGE_STONE_TAG_ID).getString(TOOLTIP)));
         }
-    }
-
-    private void apply(ItemStack stone, RelayTile relayTile, Player player) {
-        CompoundTag stoneTag = stone.getOrCreateTag();
-        if (stoneTag.contains(RUNIC_STORAGE_STONE_TAG_ID)) {
-            CompoundTag configTag = stoneTag.getCompound(RUNIC_STORAGE_STONE_TAG_ID);
-            if (RelayType.valueOf(configTag.getString(RELAY_TYPE)) == RelayType.SPLITTER) {
-                if (relayTile instanceof RelaySplitterTile relaySplitterTile) {
-                    applySplitterRelay(configTag, relaySplitterTile, player);
-                } else {
-                    PortUtil.sendMessage(player, Component.literal(CANT_APPLY_SPLITTER_CONFIGURATION_TO_ARCANE));
-                }
-            } else {
-                if (!(relayTile instanceof RelaySplitterTile)) {
-                    applyArcaneRelay(configTag, relayTile, player);
-                } else {
-                    PortUtil.sendMessage(player, Component.literal(CANT_APPLY_ARCANE_CONFIGURATION_TO_SPLITTER));
-                }
-            }
-        } else {
-            PortUtil.sendMessage(player, Component.literal(CANT_APPLY_EMPTY_CONFIGURATION));
-        }
-    }
-
-    private void applySplitterRelay(CompoundTag configTag, RelaySplitterTile relaySplitterTile, Player player) {
-        List<BlockPos> toList = deserializeBlockPosList(configTag, TO_CONFIGURATION);
-        List<BlockPos> fromList = deserializeBlockPosList(configTag, FROM_CONFIGURATION);
-
-        for (BlockPos to : toList) {
-            if (relaySplitterTile.closeEnough(to)) {
-                relaySplitterTile.setSendTo(to);
-            } else {
-                PortUtil.sendMessage(player, Component.literal("Block " + BlockPosUtils.toString(to) + " is to far"
-                        + " away from the Relay and could not be added to Deposit-Locations"));
-            }
-        }
-        for (BlockPos from : fromList) {
-            if (relaySplitterTile.closeEnough(from)) {
-                relaySplitterTile.setTakeFrom(from);
-            } else {
-                PortUtil.sendMessage(player, Component.literal("Block " + BlockPosUtils.toString(from) + " is to far"
-                        + " away from the Relay and could not be added to Take-Locations"));
-            }
-        }
-        PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
-    }
-
-    private void applyArcaneRelay(CompoundTag configTag, RelayTile relayTile, Player player) {
-        BlockPos to = deserializeBlockPos(configTag.getCompound(TO_CONFIGURATION));
-        BlockPos from = deserializeBlockPos(configTag.getCompound(FROM_CONFIGURATION));
-        if (!relayTile.closeEnough(to)) {
-            PortUtil.sendMessage(player, Component.literal("Deposit-Location " + BlockPosUtils.toString(to) + " is to far away."
-                    + " No configuration has been applied"));
-            return;
-        }
-        if (!relayTile.closeEnough(from)) {
-            PortUtil.sendMessage(player, Component.literal("Take-Location " + BlockPosUtils.toString(from) + " is to far away."
-                    + " No configuration has been applied"));
-            return;
-        }
-        relayTile.setSendTo(to);
-        relayTile.setTakeFrom(from);
-        PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
     }
 
     private void store(ItemStack stone, RelayTile relayTile, Player player) {

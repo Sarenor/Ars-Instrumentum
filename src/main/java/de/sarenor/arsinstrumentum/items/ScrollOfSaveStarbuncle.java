@@ -35,6 +35,20 @@ public class ScrollOfSaveStarbuncle extends ModItem {
         super((new Properties()).stacksTo(1).tab(ArsNouveau.itemGroup));
     }
 
+    public static void apply(ItemStack scroll, Starbuncle starbuncle, Player player) {
+        CompoundTag scrollTag = scroll.getOrCreateTag();
+        if (scrollTag.contains(SCROLL_OF_SAVE_TAG_ID)) {
+            CompoundTag configTag = scrollTag.getCompound(SCROLL_OF_SAVE_TAG_ID);
+            if (configTag.contains(DATA_TAG)) {
+                starbuncle.data = new Starbuncle.StarbuncleData(configTag.getCompound(DATA_TAG));
+            }
+            starbuncle.restoreFromTag();
+            if (player != null) {
+                PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
+            }
+        }
+    }
+
     @Override
     public InteractionResult interactLivingEntity(ItemStack doNotUseStack, Player playerEntity, LivingEntity target, InteractionHand hand) {
         if (playerEntity.level.isClientSide || hand != InteractionHand.MAIN_HAND) {
@@ -84,18 +98,6 @@ public class ScrollOfSaveStarbuncle extends ModItem {
         scrollTag.put(SCROLL_OF_SAVE_TAG_ID, configTag);
         scroll.setTag(scrollTag);
         PortUtil.sendMessage(player, Component.literal(SAVED_CONFIGURATION));
-    }
-
-    private void apply(ItemStack scroll, Starbuncle starbuncle, Player player) {
-        CompoundTag scrollTag = scroll.getOrCreateTag();
-        if (scrollTag.contains(SCROLL_OF_SAVE_TAG_ID)) {
-            CompoundTag configTag = scrollTag.getCompound(SCROLL_OF_SAVE_TAG_ID);
-            if (configTag.contains(DATA_TAG)) {
-                starbuncle.data = new Starbuncle.StarbuncleData(configTag.getCompound(DATA_TAG));
-            }
-            starbuncle.restoreFromTag();
-            PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
-        }
     }
 
     private void clear(ItemStack scroll, Player player) {
