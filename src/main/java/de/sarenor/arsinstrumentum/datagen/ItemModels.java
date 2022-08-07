@@ -2,6 +2,7 @@ package de.sarenor.arsinstrumentum.datagen;
 
 import com.google.common.base.Preconditions;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
+import de.sarenor.arsinstrumentum.blocks.ArcaneApplicator;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.data.DataGenerator;
@@ -31,6 +32,7 @@ public class ItemModels extends ItemModelProvider {
                 System.out.println("No texture for " + item.toString());
             }
         }
+        blockAsItem(ArcaneApplicator.ARCANE_APPLICATOR_ID);
         log.info("ArsInstrumentum: RegisterItemModels ended");
     }
 
@@ -39,7 +41,16 @@ public class ItemModels extends ItemModelProvider {
         return new ResourceLocation(name.getNamespace(), "items" + "/" + name.getPath());
     }
 
+    private ResourceLocation blockItemTexture(String item) {
+        return new ResourceLocation(ArsInstrumentum.MODID, "blocks" + "/" + item);
+    }
+
     private ResourceLocation registryName(final Item item) {
         return Preconditions.checkNotNull(getRegistryName(item), "Item %s has a null registry name", item);
+    }
+
+    public void blockAsItem(String s) {
+        getBuilder(ArsInstrumentum.MODID + ":" + s).parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", blockItemTexture(s));
     }
 }

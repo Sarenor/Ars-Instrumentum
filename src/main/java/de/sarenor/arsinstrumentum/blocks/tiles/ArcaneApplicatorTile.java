@@ -2,10 +2,10 @@ package de.sarenor.arsinstrumentum.blocks.tiles;
 
 import com.hollingsworth.arsnouveau.common.block.ITickable;
 import com.hollingsworth.arsnouveau.common.block.tile.ModdedTile;
-import com.hollingsworth.arsnouveau.setup.BlockRegistry;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
 import de.sarenor.arsinstrumentum.items.RunicStorageStone;
 import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
+import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container {
+    public static final String ARCANE_APPLICATOR_TILE_ID = "arcane_applicator_tile";
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
     public float frames;
     public ItemEntity entity;
@@ -35,8 +36,8 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
         super(tileEntityTypeIn, pos, state);
     }
 
-    public ArcaneApplicatorTile(BlockPos pos, BlockState state) {
-        super(BlockRegistry.BASIC_SPELL_TURRET_TILE, pos, state);
+    public ArcaneApplicatorTile(BlockPos blockPos, BlockState blockState) {
+        super(Registration.ARCANE_APPLICATOR_TILE.get(), blockPos, blockState);
     }
 
     @Override
