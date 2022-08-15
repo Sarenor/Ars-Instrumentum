@@ -17,35 +17,40 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.getNeighbours;
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 
-public class ArcaneApplicator extends TickableModBlock implements EntityBlock /*, SimpleWaterloggedBlock*/ {
+public class ArcaneApplicator extends TickableModBlock implements EntityBlock, SimpleWaterloggedBlock {
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     public static final String ARCANE_APPLICATOR_ID = "arcane_applicator";
-    public static final String ARCANE_APPLICATOR_ITEM_ID = "arcane_applicator_item";
 
     public ArcaneApplicator() {
         super(defaultProperties().noOcclusion());
-        // TODO: Figure out why Bailey can waterlog air and I can't
-        //registerDefaultState(defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(BlockStateProperties.WATERLOGGED, false).setValue(TRIGGERED, Boolean.FALSE));
     }
 
     public static Block.Properties defaultProperties() {
@@ -95,7 +100,6 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock /*
         if (neighborSignal && !isTriggered) {
             worldIn.scheduleTick(pos, this, 4);
             worldIn.setBlock(pos, state.setValue(TRIGGERED, Boolean.TRUE), 4);
-
         } else if (!neighborSignal && isTriggered) {
             worldIn.setBlock(pos, state.setValue(TRIGGERED, Boolean.FALSE), 4);
         }
@@ -144,9 +148,17 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock /*
         return new ArcaneApplicatorTile(blockPos, blockState);
     }
 
-    /*@Override
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(BlockStateProperties.WATERLOGGED);
+        builder.add(BlockStateProperties.TRIGGERED);
+    }
+
+    @Override
     public FluidState getFluidState(BlockState state) {
-        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
     @Nonnull
@@ -154,7 +166,15 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock /*
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
         return this.defaultBlockState(); //.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
-    }*/
+    }
+
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return false;
+    }
+
+    public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
+    }
 
     private Optional<ItemStack> getApplicableStack(ServerLevel serverLevel, BlockPos blockPos) {
         if (!serverLevel.isClientSide && serverLevel.getBlockEntity(blockPos) instanceof ArcaneApplicatorTile tile && tile.getStack() != null) {

@@ -21,6 +21,8 @@ public class DataGenConfig {
         generator.addProvider(event.includeClient(), new ItemModels(generator, event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new ImbuementRecipes(generator));
         generator.addProvider(event.includeServer(), new DefaultTableProvider(generator));
+        generator.addProvider(event.includeServer(), new BlockstateProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new BlockTagProvider(generator, event.getExistingFileHelper()));
         log.info("Ars Instrumentum: Data Generation ended.");
     }
 }

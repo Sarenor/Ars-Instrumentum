@@ -21,11 +21,14 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container {
+public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, IAnimatable {
     public static final String ARCANE_APPLICATOR_TILE_ID = "arcane_applicator_tile";
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
     public float frames;
@@ -135,5 +138,15 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     public void setStack(ItemStack stack) {
         this.stack = stack;
         updateBlock();
+    }
+
+    @Override
+    public void registerControllers(AnimationData data) {
+
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return null;
     }
 }
