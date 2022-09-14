@@ -1,7 +1,6 @@
 package de.sarenor.arsinstrumentum.client.renderer.tile;
 
 import com.hollingsworth.arsnouveau.client.renderer.item.GenericItemBlockRenderer;
-import com.hollingsworth.arsnouveau.client.renderer.tile.GenericModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.sarenor.arsinstrumentum.blocks.tiles.ArcaneApplicatorTile;
 import net.minecraft.client.Minecraft;
@@ -13,7 +12,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
 public class ArcaneApplicatorRenderer extends GeoBlockRenderer<ArcaneApplicatorTile> {
-    public static AnimatedGeoModel model = new GenericModel("arcane_applicator");
+    public static AnimatedGeoModel<ArcaneApplicatorTile> model = new GenericModel<>("arcane_applicator");
 
     public ArcaneApplicatorRenderer(BlockEntityRendererProvider.Context p_i226006_1_) {
         super(p_i226006_1_, model);

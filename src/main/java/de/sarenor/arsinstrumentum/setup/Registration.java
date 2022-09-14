@@ -1,17 +1,15 @@
 package de.sarenor.arsinstrumentum.setup;
 
 import com.hollingsworth.arsnouveau.ArsNouveau;
-import com.hollingsworth.arsnouveau.common.items.RendererBlockItem;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.blocks.ArcaneApplicator;
 import de.sarenor.arsinstrumentum.blocks.tiles.ArcaneApplicatorTile;
-import de.sarenor.arsinstrumentum.client.renderer.tile.ArcaneApplicatorRenderer;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
 import de.sarenor.arsinstrumentum.items.RunicStorageStone;
 import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
 import de.sarenor.arsinstrumentum.items.curios.NumericCharm;
 import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,8 +17,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.util.function.Supplier;
 
 
 public class Registration {
@@ -57,7 +53,8 @@ public class Registration {
         COPY_PASTE_SPELL_SCROLL = ITEMS.register(CopyPasteSpellScroll.COPY_PASTE_SPELL_SCROLL, CopyPasteSpellScroll::new);
         FAKE_WILDEN_TRIBUTE = ITEMS.register(FAKE_WILDEN_TRIBUTE_ID, () -> new Item(ITEM_PROPERTIES));
         NUMERIC_CHARM = ITEMS.register("numeric_mana_charm", () -> new NumericCharm(ITEM_PROPERTIES.stacksTo(1)));
-        ARCANE_APPLICATOR_ITEM = fromRendererBlock(ARCANE_APPLICATOR);
+        ARCANE_APPLICATOR_ITEM = ITEMS.register(ArcaneApplicator.ARCANE_APPLICATOR_ID, () -> new BlockItem(Registration.ARCANE_APPLICATOR.get(),
+                ITEM_PROPERTIES));
     }
 
 
@@ -65,15 +62,6 @@ public class Registration {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_ENTITY_TYPES.register(bus);
-    }
-
-    public static <B extends Block> RegistryObject<Item> fromRendererBlock(RegistryObject<B> block) {
-        return ITEMS.register(block.getId().getPath(), () -> new RendererBlockItem(block.get(), ITEM_PROPERTIES) {
-            @Override
-            public Supplier<BlockEntityWithoutLevelRenderer> getRenderer() {
-                return ArcaneApplicatorRenderer::getISTER;
-            }
-        });
     }
 
 }

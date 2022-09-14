@@ -1,6 +1,7 @@
 package de.sarenor.arsinstrumentum.blocks;
 
 import com.hollingsworth.arsnouveau.api.spell.ISpellCaster;
+import com.hollingsworth.arsnouveau.api.spell.SpellCaster;
 import com.hollingsworth.arsnouveau.common.block.TickableModBlock;
 import com.hollingsworth.arsnouveau.common.block.tile.BasicSpellTurretTile;
 import com.hollingsworth.arsnouveau.common.block.tile.RelayTile;
@@ -18,13 +19,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -47,6 +46,7 @@ import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 public class ArcaneApplicator extends TickableModBlock implements EntityBlock, SimpleWaterloggedBlock {
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     public static final String ARCANE_APPLICATOR_ID = "arcane_applicator";
+    public static final String ARCANE_APPLICATOR_ITEM_ID = "arcane_applicator_item";
 
     public ArcaneApplicator() {
         super(defaultProperties().noOcclusion());
@@ -82,7 +82,7 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     private void handleSpellturretApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-        ISpellCaster copyPasteSpellcaster = new CopyPasteSpellScroll().getSpellCaster(itemStack);
+        ISpellCaster copyPasteSpellcaster = new SpellCaster(itemStack);
         StreamSupport.stream(getNeighbours(blockPos).spliterator(), false)
                 .map(serverLevel::getBlockEntity)
                 .filter(blockEntity -> blockEntity instanceof BasicSpellTurretTile)
@@ -116,7 +116,7 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
                 ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), tile.getStack());
                 world.addFreshEntity(item);
                 tile.setStack(ItemStack.EMPTY);
-            } else if (!player.getInventory().getSelected().isEmpty()) {
+            } else if (!player.getInventory().getSelected().isEmpty() && isHoldableItem(player.getInventory().getSelected())) {
                 if (tile.getStack() != null) {
                     ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), tile.getStack());
                     world.addFreshEntity(item);
@@ -126,6 +126,12 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
             world.sendBlockUpdated(pos, state, state, 2);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    private boolean isHoldableItem(ItemStack itemStack) {
+        Item placedItem = itemStack.getItem();
+        return placedItem instanceof SpellParchment || placedItem instanceof CopyPasteSpellScroll
+                || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
     }
 
     @Override
@@ -165,7 +171,7 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
-        return this.defaultBlockState(); //.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+        return this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
     public boolean hasAnalogOutputSignal(BlockState state) {
@@ -174,6 +180,11 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
 
     public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     private Optional<ItemStack> getApplicableStack(ServerLevel serverLevel, BlockPos blockPos) {

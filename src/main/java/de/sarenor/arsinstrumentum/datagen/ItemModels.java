@@ -2,7 +2,6 @@ package de.sarenor.arsinstrumentum.datagen;
 
 import com.google.common.base.Preconditions;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
-import de.sarenor.arsinstrumentum.blocks.ArcaneApplicator;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.data.DataGenerator;
@@ -32,7 +31,7 @@ public class ItemModels extends ItemModelProvider {
                 System.out.println("No texture for " + item.toString());
             }
         }
-        blockAsItem(ArcaneApplicator.ARCANE_APPLICATOR_ID);
+        //blockAsItem(ArcaneApplicator.ARCANE_APPLICATOR_ID);
         log.info("ArsInstrumentum: RegisterItemModels ended");
     }
 
