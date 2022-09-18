@@ -38,6 +38,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,25 +52,14 @@ import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 public class ArcaneApplicator extends HorizontalDirectionalBlock implements ITickableBlock, EntityBlock, SimpleWaterloggedBlock {
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     public static final String ARCANE_APPLICATOR_ID = "arcane_applicator";
-    public static final VoxelShape SHAPE = LecternBlock.SHAPE_COMMON;
-    //public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
-   /* public static final VoxelShape SHAPE = Stream.of(
-            Block.box(0.375, 0.5, 0.375, 0.625, 0.875, 0.625),
-            Block.box(0.06328124999999996, 0.75, 0.25, 0.93671875, 0.9375, 0.9375),
-            Block.box(0.25, 0, 0.25, 0.75, 0.5, 0.75),
-            Block.box(0.75, 0.3125, 0.4375, 0.9375, 0.4375, 0.5625),
-            Block.box(0.75, 0.1875, 0.4375, 0.875, 0.3125, 0.5625),
-            Block.box(0.75, 0, 0.4375, 1, 0.1875, 0.5625),
-            Block.box(0.4375, 0.3125, 0.75, 0.5625, 0.4375, 0.9375),
-            Block.box(0.4375, 0.1875, 0.75, 0.5625, 0.3125, 0.875),
-            Block.box(0.4375, 0, 0.75, 0.5625, 0.1875, 1),
-            Block.box(0.0625, 0.3125, 0.4375, 0.25, 0.4375, 0.5625),
-            Block.box(0.125, 0.1875, 0.4375, 0.25, 0.3125, 0.5625),
-            Block.box(0, 0, 0.4375, 0.25, 0.1875, 0.5625),
-            Block.box(0.0625, 0.75, 0.125, 0.9375, 1, 0.8125)
-    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.AND)).orElse(Shapes.block());*/
-
-
+    public static final VoxelShape SHAPE_POST = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 14.0D, 12.0D);
+    public static final VoxelShape SHAPE_TOP_PLATE = Block.box(0.0D, 15.0D, 0.0D, 16.0D, 15.0D, 16.0D);
+    public static final VoxelShape SHAPE_COLLISION = Shapes.or(SHAPE_POST, SHAPE_TOP_PLATE);
+    public static final VoxelShape SHAPE_WEST = Shapes.or(Block.box(1.0D, 10.0D, 0.0D, 5.333333D, 14.0D, 16.0D), Block.box(5.333333D, 12.0D, 0.0D, 9.666667D, 16.0D, 16.0D), Block.box(9.666667D, 14.0D, 0.0D, 14.0D, 18.0D, 16.0D), SHAPE_POST);
+    public static final VoxelShape SHAPE_NORTH = Shapes.or(Block.box(0.0D, 10.0D, 1.0D, 16.0D, 14.0D, 5.333333D), Block.box(0.0D, 12.0D, 5.333333D, 16.0D, 16.0D, 9.666667D), Block.box(0.0D, 14.0D, 9.666667D, 16.0D, 18.0D, 14.0D), SHAPE_POST);
+    public static final VoxelShape SHAPE_EAST = Shapes.or(Block.box(10.666667D, 10.0D, 0.0D, 15.0D, 14.0D, 16.0D), Block.box(6.333333D, 12.0D, 0.0D, 10.666667D, 16.0D, 16.0D), Block.box(2.0D, 14.0D, 0.0D, 6.333333D, 18.0D, 16.0D), SHAPE_POST);
+    public static final VoxelShape SHAPE_SOUTH = Shapes.or(Block.box(0.0D, 10.0D, 10.666667D, 16.0D, 14.0D, 15.0D), Block.box(0.0D, 12.0D, 6.333333D, 16.0D, 16.0D, 10.666667D), Block.box(0.0D, 14.0D, 2.0D, 16.0D, 18.0D, 6.333333D), SHAPE_POST);
+    
     public ArcaneApplicator() {
         super(defaultProperties().noOcclusion());
         this.registerDefaultState(
@@ -85,7 +75,23 @@ public class ArcaneApplicator extends HorizontalDirectionalBlock implements ITic
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE;
+        return switch (pState.getValue(FACING)) {
+            case NORTH -> SHAPE_NORTH;
+            case SOUTH -> SHAPE_SOUTH;
+            case EAST -> SHAPE_EAST;
+            case WEST -> SHAPE_WEST;
+            default -> SHAPE_POST;
+        };
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return SHAPE_COLLISION;
+    }
+
+    @Override
+    public boolean useShapeForLightOcclusion(BlockState pState) {
+        return true;
     }
 
     @Override
