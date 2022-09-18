@@ -1,6 +1,6 @@
 {
   "credit": "Made with Blockbench",
-  "parent": "block/block",
+  "parent": "block/cube_all",
   "texture_size": [
     64,
     64
