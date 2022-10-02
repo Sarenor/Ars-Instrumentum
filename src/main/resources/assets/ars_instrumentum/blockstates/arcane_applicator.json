@@ -1,19 +1,7 @@
 {
   "variants": {
-    "facing=north": {
+    "": {
       "model": "ars_instrumentum:blocks/arcane_applicator"
-    },
-    "facing=south": {
-      "model": "ars_instrumentum:blocks/arcane_applicator",
-      "y": 180
-    },
-    "facing=west": {
-      "model": "ars_instrumentum:blocks/arcane_applicator",
-      "y": 270
-    },
-    "facing=east": {
-      "model": "ars_instrumentum:blocks/arcane_applicator",
-      "y": 90
     }
   }
 }

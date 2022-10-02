@@ -2,7 +2,7 @@ package de.sarenor.arsinstrumentum.blocks;
 
 import com.hollingsworth.arsnouveau.api.spell.ISpellCaster;
 import com.hollingsworth.arsnouveau.api.spell.SpellCaster;
-import com.hollingsworth.arsnouveau.common.block.ITickableBlock;
+import com.hollingsworth.arsnouveau.common.block.TickableModBlock;
 import com.hollingsworth.arsnouveau.common.block.tile.BasicSpellTurretTile;
 import com.hollingsworth.arsnouveau.common.block.tile.RelayTile;
 import com.hollingsworth.arsnouveau.common.entity.Starbuncle;
@@ -12,7 +12,6 @@ import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
 import de.sarenor.arsinstrumentum.items.RunicStorageStone;
 import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -32,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
@@ -49,8 +49,9 @@ import java.util.stream.StreamSupport;
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.getNeighbours;
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 
-public class ArcaneApplicator extends HorizontalDirectionalBlock implements ITickableBlock, EntityBlock, SimpleWaterloggedBlock {
+public class ArcaneApplicator extends TickableModBlock implements EntityBlock, SimpleWaterloggedBlock {
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final String ARCANE_APPLICATOR_ID = "arcane_applicator";
     public static final VoxelShape SHAPE_POST = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 14.0D, 12.0D);
     public static final VoxelShape SHAPE_TOP_PLATE = Block.box(0.0D, 15.0D, 0.0D, 16.0D, 15.0D, 16.0D);
@@ -59,14 +60,10 @@ public class ArcaneApplicator extends HorizontalDirectionalBlock implements ITic
     public static final VoxelShape SHAPE_NORTH = Shapes.or(Block.box(0.0D, 10.0D, 1.0D, 16.0D, 14.0D, 5.333333D), Block.box(0.0D, 12.0D, 5.333333D, 16.0D, 16.0D, 9.666667D), Block.box(0.0D, 14.0D, 9.666667D, 16.0D, 18.0D, 14.0D), SHAPE_POST);
     public static final VoxelShape SHAPE_EAST = Shapes.or(Block.box(10.666667D, 10.0D, 0.0D, 15.0D, 14.0D, 16.0D), Block.box(6.333333D, 12.0D, 0.0D, 10.666667D, 16.0D, 16.0D), Block.box(2.0D, 14.0D, 0.0D, 6.333333D, 18.0D, 16.0D), SHAPE_POST);
     public static final VoxelShape SHAPE_SOUTH = Shapes.or(Block.box(0.0D, 10.0D, 10.666667D, 16.0D, 14.0D, 15.0D), Block.box(0.0D, 12.0D, 6.333333D, 16.0D, 16.0D, 10.666667D), Block.box(0.0D, 14.0D, 2.0D, 16.0D, 18.0D, 6.333333D), SHAPE_POST);
-    
+
     public ArcaneApplicator() {
         super(defaultProperties().noOcclusion());
-        this.registerDefaultState(
-                this.stateDefinition.any()
-                        .setValue(BlockStateProperties.WATERLOGGED, false)
-                        .setValue(TRIGGERED, Boolean.FALSE)
-                        .setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(BlockStateProperties.WATERLOGGED, false).setValue(TRIGGERED, Boolean.FALSE));
     }
 
     public static Block.Properties defaultProperties() {
@@ -201,17 +198,7 @@ public class ArcaneApplicator extends HorizontalDirectionalBlock implements ITic
         super.createBlockStateDefinition(builder);
         builder.add(BlockStateProperties.WATERLOGGED);
         builder.add(BlockStateProperties.TRIGGERED);
-        builder.add(FACING);
-    }
-
-    @Override
-    public BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
-    }
-
-    @Override
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
+        builder.add(BlockStateProperties.FACING);
     }
 
     @Override
@@ -238,7 +225,7 @@ public class ArcaneApplicator extends HorizontalDirectionalBlock implements ITic
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     private Optional<ItemStack> getApplicableStack(ServerLevel serverLevel, BlockPos blockPos) {
