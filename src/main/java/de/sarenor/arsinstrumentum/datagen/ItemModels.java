@@ -25,13 +25,14 @@ public class ItemModels extends ItemModelProvider {
     protected void registerModels() {
         log.info("ArsInstrumentum: RegisterItemModels started");
         for (RegistryObject<Item> item : Registration.ITEMS.getEntries()) {
-            try {
-                getBuilder(getRegistryName(item.get()).getPath()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", itemTexture(item.get()));
-            } catch (Exception e) {
-                System.out.println("No texture for " + item.toString());
+            if (item != Registration.ARCANE_APPLICATOR_ITEM) {
+                try {
+                    getBuilder(getRegistryName(item.get()).getPath()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", itemTexture(item.get()));
+                } catch (Exception e) {
+                    System.out.println("No texture for " + item.toString());
+                }
             }
         }
-        //blockAsItem(ArcaneApplicator.ARCANE_APPLICATOR_ID);
         log.info("ArsInstrumentum: RegisterItemModels ended");
     }
 
@@ -40,16 +41,8 @@ public class ItemModels extends ItemModelProvider {
         return new ResourceLocation(name.getNamespace(), "items" + "/" + name.getPath());
     }
 
-    private ResourceLocation blockItemTexture(String item) {
-        return new ResourceLocation(ArsInstrumentum.MODID, "blocks" + "/" + item);
-    }
-
     private ResourceLocation registryName(final Item item) {
         return Preconditions.checkNotNull(getRegistryName(item), "Item %s has a null registry name", item);
     }
 
-    public void blockAsItem(String s) {
-        getBuilder(ArsInstrumentum.MODID + ":" + s).parent(new ModelFile.UncheckedModelFile("item/generated"))
-                .texture("layer0", blockItemTexture(s));
-    }
 }
