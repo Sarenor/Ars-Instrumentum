@@ -31,13 +31,13 @@ import javax.annotation.Nullable;
 public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, IAnimatable {
     public static final String ARCANE_APPLICATOR_TILE_ID = "arcane_applicator_tile";
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
-    public float frames;
     public ItemEntity entity;
+    public float frames;
     AnimationFactory factory = new AnimationFactory(this);
     private ItemStack stack = ItemStack.EMPTY;
 
-    public ArcaneApplicatorTile(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
-        super(tileEntityTypeIn, pos, state);
+    public ArcaneApplicatorTile(BlockEntityType<?> tileEntityTypeIn, BlockPos blockPos, BlockState blockState) {
+        super(tileEntityTypeIn, blockPos, blockState);
     }
 
     public ArcaneApplicatorTile(BlockPos blockPos, BlockState blockState) {
