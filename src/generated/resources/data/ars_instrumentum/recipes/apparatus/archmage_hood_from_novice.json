@@ -1,0 +1,20 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "output": {
+    "item": "ars_nouveau:archmage_hood"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "minecraft:diamond_helmet"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:novice_hood"
+    }
+  ],
+  "sourceCost": 0
+}

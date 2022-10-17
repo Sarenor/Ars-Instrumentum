@@ -1,0 +1,20 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "output": {
+    "item": "ars_nouveau:novice_boots"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "minecraft:golden_boots"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:apprentice_boots"
+    }
+  ],
+  "sourceCost": 0
+}

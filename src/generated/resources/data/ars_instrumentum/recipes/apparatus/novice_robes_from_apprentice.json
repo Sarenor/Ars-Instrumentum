@@ -1,0 +1,20 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "output": {
+    "item": "ars_nouveau:novice_robes"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "minecraft:golden_chestplate"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:apprentice_robes"
+    }
+  ],
+  "sourceCost": 0
+}
