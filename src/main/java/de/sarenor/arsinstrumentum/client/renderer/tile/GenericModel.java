@@ -2,7 +2,7 @@ package de.sarenor.arsinstrumentum.client.renderer.tile;
 
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
 
 public class GenericModel<T extends IAnimatable> extends com.hollingsworth.arsnouveau.client.renderer.tile.GenericModel<T> {
     public String path;

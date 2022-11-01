@@ -59,16 +59,9 @@ Ars Instrumentum is a small set of magical utilities and tools that I wanted to 
     versionRange="[1.18.2-5.0.6.3,)"
     ordering="AFTER"
     side="BOTH"
-
-[[dependencies.ars_instrumentum]]
-    modId="geckolib3"
-    mandatory=true
-    versionRange="[3.0.13,)"
-    ordering="AFTER"
-    side="BOTH"
 [[dependencies.ars_instrumentum]]
     modId="ars_nouveau"
     mandatory=true
-    versionRange="[3.2.0,)"
+    versionRange="[3.4.5,)"
     ordering="AFTER"
     side="BOTH"

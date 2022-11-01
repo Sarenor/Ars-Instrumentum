@@ -8,11 +8,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
+import software.bernie.ars_nouveau.geckolib3.model.AnimatedGeoModel;
+import software.bernie.ars_nouveau.geckolib3.renderers.geo.GeoBlockRenderer;
 
 public class ArcaneApplicatorRenderer extends GeoBlockRenderer<ArcaneApplicatorTile> {
-    public static AnimatedGeoModel<ArcaneApplicatorTile> arcane_applicator_model = new GenericModel<>("arcane_applicator");
+    public static AnimatedGeoModel<ArcaneApplicatorTile> arcane_applicator_model = new GenericModel<ArcaneApplicatorTile>("arcane_applicator");
 
     public ArcaneApplicatorRenderer(BlockEntityRendererProvider.Context p_i226006_1_) {
         super(p_i226006_1_, arcane_applicator_model);
