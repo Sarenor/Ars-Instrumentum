@@ -4,7 +4,7 @@
   "icon": "ars_instrumentum:arcane_applicator",
   "pages": [
     {
-      "text": "An ancient wizard more concerend with the question of if he could not if he should created the Arcane Applicator. The device can store a Runic Stone of Storage, a Scroll of Save Starbuncle, a Scroll of Spell Transfer or an inscribed Spell Parchment and apply it to surrounding machinery when it receives a redstone signal.",
+      "text": "An ancient wizard more concerned with the question of if he could not if he should created the Arcane Applicator. The device can store a Runic Stone of Storage, a Scroll of Save Starbuncle, a Scroll of Spell Transfer or an inscribed Spell Parchment and apply it to surrounding machinery when it receives a redstone signal.",
       "type": "patchouli:text"
     },
     {
