@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import de.sarenor.arsinstrumentum.network.Networking;
 import de.sarenor.arsinstrumentum.network.WizardsArmariumChoiceMessage;
 import de.sarenor.arsinstrumentum.utils.CuriosUtil;
+import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -47,6 +48,7 @@ import static com.hollingsworth.arsnouveau.common.event.FamiliarEvents.getFamili
 import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
 import static de.sarenor.arsinstrumentum.utils.IterableUtils.iterableToList;
 
+@Log4j2
 public class WizardsArmarium extends ArsNouveauCurio {
     public static final String WIZARDS_ARMARIUM_ID = "wizards_armarium";
     public static final String HOTBAR_SWITCH_WARNING = "instrumentum.armarium.hotbar_warning";
@@ -120,11 +122,15 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId, Supplier<NetworkEvent.Context> ctx) {
-        if (familiarHolderId != null) {
-            new PacketSummonFamiliar(familiarHolderId, player.getId()).handle(ctx);
-        } else {
-            getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
-                    .stream().findFirst().ifPresent(familiarEntity -> familiarEntity.remove(Entity.RemovalReason.DISCARDED));
+        try {
+            if (familiarHolderId != null) {
+                new PacketSummonFamiliar(familiarHolderId, player.getId()).handle(ctx);
+            } else {
+                getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
+                        .stream().findFirst().ifPresent(familiarEntity -> familiarEntity.remove(Entity.RemovalReason.DISCARDED));
+            }
+        } catch (Exception e) {
+            log.error(e);
         }
     }
 
