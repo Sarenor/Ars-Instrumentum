@@ -6,6 +6,7 @@
   "mixins": [
   ],
   "client": [
+    "GlyphCostMixin"
   ],
   "minVersion": "0.8"
 }
