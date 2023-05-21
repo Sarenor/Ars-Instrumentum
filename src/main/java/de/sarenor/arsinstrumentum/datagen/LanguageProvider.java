@@ -32,7 +32,6 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
         add(ARCANE_APPLICATOR.get(), "Arcane Applicator");
         add(WizardsArmarium.SWITCHED_TO_NO_HOTBAR, "Wizards Armarium will not switch Hotbar Items");
         add(WizardsArmarium.SWITCHED_TO_HOTBAR, "Wizards Armarium will switch Hotbar Items");
-        add(WizardsArmarium.HOTBAR_SWITCH_WARNING, "Remove Hotbar Items from Armarium before switching mode!");
         add(NumericCharm.TOOLTIP_MESSAGE, "Mana cost : %i");
         log.info("ArsInstrumentum: AddTranslation ended");
     }

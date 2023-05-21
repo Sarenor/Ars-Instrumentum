@@ -51,7 +51,6 @@ import static de.sarenor.arsinstrumentum.utils.IterableUtils.iterableToList;
 @Log4j2
 public class WizardsArmarium extends ArsNouveauCurio {
     public static final String WIZARDS_ARMARIUM_ID = "wizards_armarium";
-    public static final String HOTBAR_SWITCH_WARNING = "instrumentum.armarium.hotbar_warning";
     public static final String SWITCHED_TO_NO_HOTBAR = "instrumentum.armarium.hotbar_no_switch";
     public static final String SWITCHED_TO_HOTBAR = "instrumentum.armarium.hotbar_switch";
     private static final int HOTBAR_SIZE = 9;
@@ -94,7 +93,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
 
     public static void handleModeSwitch(ItemStack itemStack, Player player) {
         ArmariumStorage storage = new ArmariumStorage(itemStack);
-        storage.switchIsHotbarSwitch();
+        storage.switchIsHotbarSwitch(player);
         PortUtil.sendMessage(player, Component.translatable(
                 storage.isHotbarSwitch() ? SWITCHED_TO_HOTBAR : SWITCHED_TO_NO_HOTBAR)
         );
@@ -124,7 +123,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
     private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId, Supplier<NetworkEvent.Context> ctx) {
         try {
             if (familiarHolderId != null) {
-                new PacketSummonFamiliar(familiarHolderId, player.getId()).handle(ctx);
+                new PacketSummonFamiliar(familiarHolderId).handle(ctx);
             } else {
                 getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
                         .stream().findFirst().ifPresent(familiarEntity -> familiarEntity.remove(Entity.RemovalReason.DISCARDED));

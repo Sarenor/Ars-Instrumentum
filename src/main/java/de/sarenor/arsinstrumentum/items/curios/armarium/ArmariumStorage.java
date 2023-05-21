@@ -2,29 +2,27 @@ package de.sarenor.arsinstrumentum.items.curios.armarium;
 
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ArmariumStorage {
 
     public static final String ARMARIUM_STORAGE_TAG_ID = ArsInstrumentum.MODID + "_armarium_storage_tag";
+    public static final MutableComponent WILL_SWITCH_HOTBAR = Component.translatable(WizardsArmarium.SWITCHED_TO_HOTBAR);
+    public static final MutableComponent WONT_SWITCH_HOTBAR = Component.translatable(WizardsArmarium.SWITCHED_TO_NO_HOTBAR);
     private static final String CURRENT_SLOT = "current_slot";
     private static final String FLAVORTEXT = "flavortext"; //TODO: Actually write Flavortext
     private static final String IS_HOTBAR_SWITCH = "is_hotbar_switch";
-    public static final MutableComponent WILL_SWITCH_HOTBAR = Component.translatable(WizardsArmarium.SWITCHED_TO_HOTBAR);
-    public static final MutableComponent WONT_SWITCH_HOTBAR = Component.translatable(WizardsArmarium.SWITCHED_TO_NO_HOTBAR);
-    public static final MutableComponent HOTBAR_WARNING = Component.translatable(WizardsArmarium.HOTBAR_SWITCH_WARNING);
-    private static final Style HOTBAR_WARNING_STYLE = Style.EMPTY.withColor(TextColor.fromRgb((int) Long.parseLong("AA0000", 16))).withUnderlined(true);
 
     private final Map<Slots, ArmariumSlot> armariumSlots = new HashMap<>();
+    private final String flavorText;
     private Slots currentSlot;
-    private String flavorText;
     private ItemStack armarium;
     private boolean isHotbarSwitch;
 
@@ -50,12 +48,37 @@ public class ArmariumStorage {
         }
     }
 
-    public void switchIsHotbarSwitch() {
+    public void switchIsHotbarSwitch(Player player) {
         isHotbarSwitch = !isHotbarSwitch;
-        for (ArmariumSlot slot : armariumSlots.values()) {
-            slot.setHotbar(Collections.emptyList());
-        }
+        List<ItemStack> itemStacksToDrop = new ArrayList<>();
+        armariumSlots.forEach((slots, armariumSlot) -> {
+            if (!slots.equals(currentSlot)) {
+                itemStacksToDrop.addAll(armariumSlot.getHotbar());
+            }
+            armariumSlot.setHotbar(Collections.emptyList());
+        });
+
+        itemStacksToDrop.forEach(itemStack -> spawnItem(player, itemStack));
+
         writeArmariumStorageToArmariumItem();
+    }
+
+    private void spawnItem(Player player, ItemStack itemStack) {
+        Random rand = new Random();
+        float rx = rand.nextFloat() * 0.8F + 0.1F;
+        float ry = rand.nextFloat() * 0.8F + 0.1F;
+        float rz = rand.nextFloat() * 0.8F + 0.1F;
+
+        ItemEntity entityItem = new ItemEntity(player.getLevel(),
+                player.position().x + rx, player.position().y + ry, player.position().z + rz,
+                itemStack.copy());
+
+        if (itemStack.hasTag()) {
+            entityItem.getItem().setTag(itemStack.getTag().copy());
+        }
+
+        player.getLevel().addFreshEntity(entityItem);
+        itemStack.setCount(0);
     }
 
     public boolean isHotbarSwitch() {
@@ -79,13 +102,12 @@ public class ArmariumStorage {
     }
 
     public List<Component> getTooltip() {
-        HOTBAR_WARNING.setStyle(HOTBAR_WARNING_STYLE);
         if (!armariumSlots.isEmpty()) {
-            return List.of(HOTBAR_WARNING,
+            return List.of(
                     isHotbarSwitch ? WILL_SWITCH_HOTBAR : WONT_SWITCH_HOTBAR,
                     Component.literal("Next slots armor is: " + armariumSlots.get(Slots.getNextSlot(currentSlot)).listArmor()));
         } else {
-            return List.of(HOTBAR_WARNING, isHotbarSwitch ? WILL_SWITCH_HOTBAR : WONT_SWITCH_HOTBAR);
+            return List.of(isHotbarSwitch ? WILL_SWITCH_HOTBAR : WONT_SWITCH_HOTBAR);
         }
     }
 
