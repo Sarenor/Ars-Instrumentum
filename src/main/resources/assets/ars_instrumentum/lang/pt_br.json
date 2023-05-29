@@ -1,0 +1,14 @@
+{
+   "ars_instrumentum.tooltip.mana_cost": "Custo de Mana: ",
+   "block.ars_instrumentum.arcane_applicator": "Aplicador Arcano",
+   "instrumentum.armarium.hotbar_no_switch": "Armário dos Magos não trocará itens da Hotbar",
+   "instrumentum.armarium.hotbar_switch": "Armário dos Magos trocará itens da Hotbar",
+   "item.ars_instrumentum.copy_paste_spell_scroll": "Pergaminho de Transferência de Feitiço",
+   "item.ars_instrumentum.fake_wilden_tribute": "Essência de inimigos vencidos",
+   "item.ars_instrumentum.numeric_mana_charm": "Amuleto de Mana Numérico",
+   "item.ars_instrumentum.runic_storage_stone": "Pedra Rúnica de Armazenamento",
+   "item.ars_instrumentum.scroll_of_save_starbuncle": "Pergaminho de Salvar Starbuncle",
+   "item.ars_instrumentum.wizards_armarium": "Armário dos Magos",
+   "key.ars_nouveau.choose_armarium_slot": "(Armário dos Magos) HUD de alternância de seleção",
+   "key.ars_nouveau.switch_armarium_slot": "Trocar Armário dos Magos"
+}

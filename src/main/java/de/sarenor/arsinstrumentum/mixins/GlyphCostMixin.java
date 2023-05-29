@@ -35,7 +35,7 @@ public class GlyphCostMixin {
         Player player = ArsNouveau.proxy.getPlayer();
         if (player == null) return;
         if (NumericCharm.hasCharm(player) || ArsInstrumentumConfig.Client.SHOW_MANA_NUM.get()) {
-            int cost;
+            int cost = 0;
             if (instance instanceof Glyph glyph) cost = glyph.spellPart.getCastingCost();
             else if (instance instanceof ICasterTool casterTool) {
                 var casterData = casterTool.getSpellCaster(stack);
@@ -48,7 +48,7 @@ public class GlyphCostMixin {
                 cost = casterData.getDiscountedCost();
             } else return;
 
-            pTooltipComponents.add(Component.translatable(NumericCharm.TOOLTIP_MESSAGE, cost).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE)));
+            pTooltipComponents.add(Component.translatable(NumericCharm.TOOLTIP_MESSAGE, cost).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE)).append(String.valueOf(cost)));
         }
     }
 }
