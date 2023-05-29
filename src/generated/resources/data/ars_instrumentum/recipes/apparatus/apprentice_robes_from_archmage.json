@@ -1,0 +1,18 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "output": {
+    "item": "ars_nouveau:apprentice_robes"
+  },
+  "pedestalItems": [
+    {
+      "item": "minecraft:iron_chestplate"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:archmage_robes"
+    }
+  ],
+  "sourceCost": 0
+}

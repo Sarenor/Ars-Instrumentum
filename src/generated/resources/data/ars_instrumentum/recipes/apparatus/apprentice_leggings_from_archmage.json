@@ -1,0 +1,18 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "output": {
+    "item": "ars_nouveau:apprentice_leggings"
+  },
+  "pedestalItems": [
+    {
+      "item": "minecraft:iron_leggings"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:archmage_leggings"
+    }
+  ],
+  "sourceCost": 0
+}

@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
             if (configTag.contains(DATA_TAG)) {
                 starbuncle.data = new Starbuncle.StarbuncleData(configTag.getCompound(DATA_TAG));
             }
+            // consider cherry-picking the data we want to restore
             starbuncle.restoreFromTag();
             if (player != null) {
                 PortUtil.sendMessage(player, Component.literal(APPLIED_CONFIGURATION));
@@ -50,7 +52,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack doNotUseStack, Player playerEntity, LivingEntity target, InteractionHand hand) {
+    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack doNotUseStack, Player playerEntity, @NotNull LivingEntity target, @NotNull InteractionHand hand) {
         if (playerEntity.level.isClientSide || hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
@@ -68,7 +70,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player playerEntity, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player playerEntity, @NotNull InteractionHand hand) {
         if (playerEntity.isShiftKeyDown() && hand == InteractionHand.MAIN_HAND) {
             clear(playerEntity.getItemInHand(hand), playerEntity);
         }
@@ -91,10 +93,11 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     private void store(ItemStack scroll, Starbuncle starbuncle, Player player) {
         CompoundTag scrollTag = scroll.getOrCreateTag();
         CompoundTag configTag = new CompoundTag();
-        CompoundTag starbyBehavior = starbuncle.data.toTag(starbuncle, new CompoundTag());
+        Starbuncle.StarbuncleData data = starbuncle.data;
+        CompoundTag starbyBehavior = data.toTag(starbuncle, new CompoundTag());
+        //don't save cosmetic data
+        starbyBehavior.remove("cosmetic");
         configTag.put(DATA_TAG, starbyBehavior);
-        //configTag.putString(TOOLTIP, "Stored Config with " + starbuncle.data.size() + " Take-Locations and "
-        //        + starbuncle.data.TO_LIST.size() + " Deposit-Locations");
         scrollTag.put(SCROLL_OF_SAVE_TAG_ID, configTag);
         scroll.setTag(scrollTag);
         PortUtil.sendMessage(player, Component.literal(SAVED_CONFIGURATION));
