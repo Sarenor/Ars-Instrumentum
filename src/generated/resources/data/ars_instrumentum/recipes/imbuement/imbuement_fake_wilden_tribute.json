@@ -1,0 +1,26 @@
+{
+  "type": "ars_nouveau:imbuement",
+  "count": 1,
+  "input": {
+    "tag": "forge:storage_blocks/diamond"
+  },
+  "output": "ars_instrumentum:fake_wilden_tribute",
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "ars_nouveau:archmage_spell_book"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:nether_star"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:totem_of_undying"
+      }
+    }
+  ],
+  "source": 5000
+}

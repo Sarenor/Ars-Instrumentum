@@ -3,6 +3,7 @@ package de.sarenor.arsinstrumentum.mixins;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.item.ICasterTool;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
+import com.hollingsworth.arsnouveau.api.util.ManaUtil;
 import com.hollingsworth.arsnouveau.common.enchantment.EnchantmentRegistry;
 import com.hollingsworth.arsnouveau.common.items.Glyph;
 import com.hollingsworth.arsnouveau.common.spell.casters.ReactiveCaster;
@@ -35,17 +36,17 @@ public class GlyphCostMixin {
         Player player = ArsNouveau.proxy.getPlayer();
         if (player == null) return;
         if (NumericCharm.hasCharm(player) || ArsInstrumentumConfig.Client.SHOW_MANA_NUM.get()) {
-            int cost = 0;
+            int cost;
             if (instance instanceof Glyph glyph) cost = glyph.spellPart.getCastingCost();
             else if (instance instanceof ICasterTool casterTool) {
                 var casterData = casterTool.getSpellCaster(stack);
                 Spell spell = casterData.getSpell(casterData.getCurrentSlot());
                 if (spell.isEmpty()) return;
-                cost = spell.getDiscountedCost();
+                cost = spell.getDiscountedCost() - ManaUtil.getPlayerDiscounts(player, spell);
             } else if (stack.getEnchantmentLevel(EnchantmentRegistry.REACTIVE_ENCHANTMENT.get()) > 0) {
-                var casterData = new ReactiveCaster(stack).getSpell();
+                Spell casterData = new ReactiveCaster(stack).getSpell();
                 if (casterData.isEmpty()) return;
-                cost = casterData.getDiscountedCost();
+                cost = casterData.getDiscountedCost() - ManaUtil.getPlayerDiscounts(player, casterData);
             } else return;
 
             pTooltipComponents.add(Component.translatable(NumericCharm.TOOLTIP_MESSAGE, cost).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE)).append(String.valueOf(cost)));

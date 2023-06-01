@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "ars_nouveau:archwood_slab"
+    },
+    "G": {
+      "tag": "forge:nuggets/gold"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "S": {
+      "item": "ars_nouveau:sourcestone"
+    }
+  },
+  "pattern": [
+    "GAG",
+    " S ",
+    "SRS"
+  ],
+  "result": {
+    "item": "ars_instrumentum:arcane_applicator"
+  }
+}
