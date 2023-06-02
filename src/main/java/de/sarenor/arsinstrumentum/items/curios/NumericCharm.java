@@ -1,11 +1,14 @@
 package de.sarenor.arsinstrumentum.items.curios;
 
+import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.item.ArsNouveauCurio;
 import de.sarenor.arsinstrumentum.setup.ArsInstrumentumConfig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotContext;
 
 public class NumericCharm extends ArsNouveauCurio {
     public NumericCharm(Properties pProperties) {
@@ -31,4 +34,9 @@ public class NumericCharm extends ArsNouveauCurio {
         return false;
     }
 
+    @Override
+    public void onUnequip(SlotContext slotContext, ItemStack newStack, ItemStack stack) {
+        super.onUnequip(slotContext, newStack, stack);
+        ArsNouveauAPI.ENABLE_DEBUG_NUMBERS = false; //reset the switch. will be set to true when the overlay check succeeds
+    }
 }
