@@ -33,7 +33,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 
-version = '3.4.2'
+version = '3.4.3'
 group = 'de.sarenor.arsinstrumentum' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'ars_instrumentum-1.19.2'
 
