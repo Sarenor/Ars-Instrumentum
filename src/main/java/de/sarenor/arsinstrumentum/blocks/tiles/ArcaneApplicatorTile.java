@@ -17,13 +17,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
 import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationData;
 import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationFactory;
+import software.bernie.ars_nouveau.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,7 +35,7 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
     public ItemEntity entity;
     public float frames;
-    AnimationFactory factory = new AnimationFactory(this);
+    AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private ItemStack stack = ItemStack.EMPTY;
 
     public ArcaneApplicatorTile(BlockEntityType<?> tileEntityTypeIn, BlockPos blockPos, BlockState blockState) {
@@ -45,7 +47,7 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public void load(CompoundTag compound) {
+    public void load(@NotNull CompoundTag compound) {
         super.load(compound);
         this.stack = compound.contains("itemStack") ? ItemStack.of((CompoundTag) compound.get("itemStack")) : ItemStack.EMPTY;
     }
@@ -76,12 +78,12 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public ItemStack getItem(int slot) {
+    public @NotNull ItemStack getItem(int slot) {
         return getStack() == null ? ItemStack.EMPTY : getStack();
     }
 
     @Override
-    public ItemStack removeItem(int index, int count) {
+    public @NotNull ItemStack removeItem(int index, int count) {
         ItemStack toReturn = getItem(0).copy().split(count);
         getStack().shrink(1);
         updateBlock();
@@ -89,7 +91,7 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int index) {
+    public @NotNull ItemStack removeItemNoUpdate(int index) {
         return getStack();
     }
 
@@ -100,13 +102,13 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public void setItem(int index, ItemStack s) {
+    public void setItem(int index, @NotNull ItemStack s) {
         setStack(s);
         updateBlock();
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 
@@ -120,7 +122,7 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, final @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemHandler.cast();
         }
         return super.getCapability(cap, side);

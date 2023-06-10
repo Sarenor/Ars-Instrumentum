@@ -39,9 +39,12 @@ public class NumericManaHUD extends GuiComponent {
         if (player == null || !event.getOverlay().id().equals(hudLoc)) {
             return;
         }
-        if (NumericCharm.hasCharm(player) && Client.SHOW_MANA_ON_TOP.get()) {
-            drawTopHUD(event.getPoseStack(), player);
-        }
+        if (NumericCharm.hasCharm(player))
+            if (Client.SHOW_MANA_ON_TOP.get()) {
+                drawTopHUD(event.getPoseStack(), player);
+            }else {
+                ArsNouveauAPI.ENABLE_DEBUG_NUMBERS = true;
+            }
     }
 
     private static void drawTopHUD(PoseStack ms, Player player) {
