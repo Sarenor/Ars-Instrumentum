@@ -15,7 +15,7 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
 
 
     public LanguageProvider(DataGenerator gen, String locale) {
-        super(gen, ArsInstrumentum.MODID, locale);
+        super(gen.getPackOutput(), ArsInstrumentum.MODID, locale);
     }
 
     @Override

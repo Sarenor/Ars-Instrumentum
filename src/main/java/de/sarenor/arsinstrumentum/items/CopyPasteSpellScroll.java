@@ -1,6 +1,5 @@
 package de.sarenor.arsinstrumentum.items;
 
-import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.item.ICasterTool;
 import com.hollingsworth.arsnouveau.api.spell.ISpellCaster;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -19,11 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class CopyPasteSpellScroll extends ModItem implements ICasterTool {
 
@@ -31,11 +29,11 @@ public class CopyPasteSpellScroll extends ModItem implements ICasterTool {
     public static final String APPLIED_CONFIGURATION = "Applied Spell";
 
     public CopyPasteSpellScroll() {
-        super((new Properties()).stacksTo(1).tab(ArsNouveau.itemGroup));
+        super((new Properties()).stacksTo(1));
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand handIn) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player player, @NotNull InteractionHand handIn) {
         ItemStack usedCopyPasteScroll = player.getItemInHand(handIn);
         if (!worldIn.isClientSide() && player.isShiftKeyDown()) {
             ItemStack offhand = player.getOffhandItem();

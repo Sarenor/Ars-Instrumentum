@@ -1,10 +1,8 @@
 package de.sarenor.arsinstrumentum.items;
 
-import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.common.entity.Starbuncle;
 import com.hollingsworth.arsnouveau.common.items.ModItem;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -15,7 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -33,7 +30,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
     private static final String SCROLL_OF_SAVE_TAG_ID = "scroll_of_save_starbuncle_tag";
 
     public ScrollOfSaveStarbuncle() {
-        super((new Properties()).stacksTo(1).tab(ArsNouveau.itemGroup));
+        super((new Properties()).stacksTo(1));
     }
 
     public static void apply(ItemStack scroll, Starbuncle starbuncle, Player player) {
@@ -53,7 +50,7 @@ public class ScrollOfSaveStarbuncle extends ModItem {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack doNotUseStack, Player playerEntity, @NotNull LivingEntity target, @NotNull InteractionHand hand) {
-        if (playerEntity.level.isClientSide || hand != InteractionHand.MAIN_HAND) {
+        if (playerEntity.level().isClientSide || hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
 
@@ -75,11 +72,6 @@ public class ScrollOfSaveStarbuncle extends ModItem {
             clear(playerEntity.getItemInHand(hand), playerEntity);
         }
         return InteractionResultHolder.pass(playerEntity.getItemInHand(hand));
-    }
-
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
-        return false;
     }
 
     @Override

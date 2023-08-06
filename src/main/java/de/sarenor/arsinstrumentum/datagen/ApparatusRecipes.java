@@ -3,7 +3,7 @@ package de.sarenor.arsinstrumentum.datagen;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.IEnchantingRecipe;
 import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
-import com.hollingsworth.arsnouveau.setup.ItemsRegistry;
+import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import lombok.extern.log4j.Log4j2;
@@ -15,7 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +35,10 @@ public class ApparatusRecipes extends ApparatusRecipeProvider {
     }
 
     @Override
-    public void run(CachedOutput cache) throws IOException {
+    public void collectJsons(CachedOutput cache) {
         log.info("ArsInstrumentum: Recipe-Generation started");
         addEntries();
-        Path output = this.generator.getOutputFolder();
+        Path output = this.generator.getPackOutput().getOutputFolder();
         for (IEnchantingRecipe g : recipes) {
             if (g instanceof EnchantingApparatusRecipe apparatusRecipe) {
                 System.out.println(g);
@@ -62,174 +61,174 @@ public class ApparatusRecipes extends ApparatusRecipeProvider {
                 .build());
 
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_HOOD)
-                .withReagent(ItemsRegistry.APPRENTICE_HOOD)
+                .withResult(ItemsRegistry.BATTLEMAGE_HOOD)
+                .withReagent(ItemsRegistry.ARCANIST_HOOD)
                 .withPedestalItem(1, Items.DIAMOND_HELMET)
                 .keepNbtOfReagent(true)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_hood_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_hood_from_arcanist"))
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_ROBES)
-                .withReagent(ItemsRegistry.APPRENTICE_ROBES)
+                .withResult(ItemsRegistry.BATTLEMAGE_ROBES)
+                .withReagent(ItemsRegistry.ARCANIST_ROBES)
                 .withPedestalItem(1, Items.DIAMOND_CHESTPLATE)
                 .keepNbtOfReagent(true)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_robes_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_robes_from_arcanist"))
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_LEGGINGS)
-                .withReagent(ItemsRegistry.APPRENTICE_LEGGINGS)
+                .withResult(ItemsRegistry.BATTLEMAGE_LEGGINGS)
+                .withReagent(ItemsRegistry.ARCANIST_LEGGINGS)
                 .withPedestalItem(1, Items.DIAMOND_LEGGINGS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_leggings_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_leggings_from_arcanist"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_BOOTS)
-                .withReagent(ItemsRegistry.APPRENTICE_BOOTS)
+                .withResult(ItemsRegistry.BATTLEMAGE_BOOTS)
+                .withReagent(ItemsRegistry.ARCANIST_BOOTS)
                 .withPedestalItem(1, Items.DIAMOND_BOOTS)
                 .keepNbtOfReagent(true)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_boots_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_boots_from_arcanist"))
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_HOOD)
-                .withReagent(ItemsRegistry.NOVICE_HOOD)
+                .withResult(ItemsRegistry.BATTLEMAGE_HOOD)
+                .withReagent(ItemsRegistry.SORCERER_HOOD)
                 .withPedestalItem(1, Items.DIAMOND_HELMET)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_hood_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_hood_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_ROBES)
-                .withReagent(ItemsRegistry.NOVICE_ROBES)
+                .withResult(ItemsRegistry.BATTLEMAGE_ROBES)
+                .withReagent(ItemsRegistry.SORCERER_ROBES)
                 .withPedestalItem(1, Items.DIAMOND_CHESTPLATE)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_robes_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_robes_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_LEGGINGS)
-                .withReagent(ItemsRegistry.NOVICE_LEGGINGS)
+                .withResult(ItemsRegistry.BATTLEMAGE_LEGGINGS)
+                .withReagent(ItemsRegistry.SORCERER_LEGGINGS)
                 .withPedestalItem(1, Items.DIAMOND_LEGGINGS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_leggings_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_leggings_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.ARCHMAGE_BOOTS)
-                .withReagent(ItemsRegistry.NOVICE_BOOTS)
+                .withResult(ItemsRegistry.BATTLEMAGE_BOOTS)
+                .withReagent(ItemsRegistry.SORCERER_BOOTS)
                 .withPedestalItem(1, Items.DIAMOND_BOOTS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "archmage_boots_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "battlemage_boots_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
 
 
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_HOOD)
-                .withReagent(ItemsRegistry.NOVICE_HOOD)
+                .withResult(ItemsRegistry.ARCANIST_HOOD)
+                .withReagent(ItemsRegistry.SORCERER_HOOD)
                 .withPedestalItem(1, Items.IRON_HELMET)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_hood_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_hood_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_ROBES)
-                .withReagent(ItemsRegistry.NOVICE_ROBES)
+                .withResult(ItemsRegistry.ARCANIST_ROBES)
+                .withReagent(ItemsRegistry.SORCERER_ROBES)
                 .withPedestalItem(1, Items.IRON_CHESTPLATE)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_robes_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_robes_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_LEGGINGS)
-                .withReagent(ItemsRegistry.NOVICE_LEGGINGS)
+                .withResult(ItemsRegistry.ARCANIST_LEGGINGS)
+                .withReagent(ItemsRegistry.SORCERER_LEGGINGS)
                 .withPedestalItem(1, Items.IRON_LEGGINGS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_leggings_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_leggings_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_BOOTS)
-                .withReagent(ItemsRegistry.NOVICE_BOOTS)
+                .withResult(ItemsRegistry.ARCANIST_BOOTS)
+                .withReagent(ItemsRegistry.SORCERER_BOOTS)
                 .withPedestalItem(1, Items.IRON_BOOTS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_boots_from_novice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_boots_from_sorcerer"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_HOOD)
-                .withReagent(ItemsRegistry.ARCHMAGE_HOOD)
+                .withResult(ItemsRegistry.ARCANIST_HOOD)
+                .withReagent(ItemsRegistry.BATTLEMAGE_HOOD)
                 .withPedestalItem(1, Items.IRON_HELMET)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_hood_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_hood_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_ROBES)
-                .withReagent(ItemsRegistry.ARCHMAGE_ROBES)
+                .withResult(ItemsRegistry.ARCANIST_ROBES)
+                .withReagent(ItemsRegistry.BATTLEMAGE_ROBES)
                 .withPedestalItem(1, Items.IRON_CHESTPLATE)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_robes_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_robes_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_LEGGINGS)
-                .withReagent(ItemsRegistry.ARCHMAGE_LEGGINGS)
+                .withResult(ItemsRegistry.ARCANIST_LEGGINGS)
+                .withReagent(ItemsRegistry.BATTLEMAGE_LEGGINGS)
                 .withPedestalItem(1, Items.IRON_LEGGINGS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_leggings_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_leggings_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.APPRENTICE_BOOTS)
-                .withReagent(ItemsRegistry.ARCHMAGE_BOOTS)
+                .withResult(ItemsRegistry.ARCANIST_BOOTS)
+                .withReagent(ItemsRegistry.BATTLEMAGE_BOOTS)
                 .withPedestalItem(1, Items.IRON_BOOTS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "apprentice_boots_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "arcanist_boots_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
 
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_HOOD)
-                .withReagent(ItemsRegistry.APPRENTICE_HOOD)
+                .withResult(ItemsRegistry.SORCERER_HOOD)
+                .withReagent(ItemsRegistry.ARCANIST_HOOD)
                 .withPedestalItem(1, Items.GOLDEN_HELMET)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_hood_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_hood_from_arcanist"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_ROBES)
-                .withReagent(ItemsRegistry.APPRENTICE_ROBES)
+                .withResult(ItemsRegistry.SORCERER_ROBES)
+                .withReagent(ItemsRegistry.ARCANIST_ROBES)
                 .withPedestalItem(1, Items.GOLDEN_CHESTPLATE)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_robes_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_robes_from_arcanist"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_LEGGINGS)
-                .withReagent(ItemsRegistry.APPRENTICE_LEGGINGS)
+                .withResult(ItemsRegistry.SORCERER_LEGGINGS)
+                .withReagent(ItemsRegistry.ARCANIST_LEGGINGS)
                 .withPedestalItem(1, Items.GOLDEN_LEGGINGS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_leggings_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_leggings_from_arcanist"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_BOOTS)
-                .withReagent(ItemsRegistry.APPRENTICE_BOOTS)
+                .withResult(ItemsRegistry.SORCERER_BOOTS)
+                .withReagent(ItemsRegistry.ARCANIST_BOOTS)
                 .withPedestalItem(1, Items.GOLDEN_BOOTS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_boots_from_apprentice"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_boots_from_arcanist"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_HOOD)
-                .withReagent(ItemsRegistry.ARCHMAGE_HOOD)
+                .withResult(ItemsRegistry.SORCERER_HOOD)
+                .withReagent(ItemsRegistry.BATTLEMAGE_HOOD)
                 .withPedestalItem(1, Items.GOLDEN_HELMET)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_hood_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_hood_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_ROBES)
-                .withReagent(ItemsRegistry.ARCHMAGE_ROBES)
+                .withResult(ItemsRegistry.SORCERER_ROBES)
+                .withReagent(ItemsRegistry.BATTLEMAGE_ROBES)
                 .withPedestalItem(1, Items.GOLDEN_CHESTPLATE)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_robes_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_robes_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_LEGGINGS)
-                .withReagent(ItemsRegistry.ARCHMAGE_LEGGINGS)
+                .withResult(ItemsRegistry.SORCERER_LEGGINGS)
+                .withReagent(ItemsRegistry.BATTLEMAGE_LEGGINGS)
                 .withPedestalItem(1, Items.GOLDEN_LEGGINGS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_leggings_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_leggings_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
         this.recipes.add(ApparatusRecipeBuilder.builder()
-                .withResult(ItemsRegistry.NOVICE_BOOTS)
-                .withReagent(ItemsRegistry.ARCHMAGE_BOOTS)
+                .withResult(ItemsRegistry.SORCERER_BOOTS)
+                .withReagent(ItemsRegistry.BATTLEMAGE_BOOTS)
                 .withPedestalItem(1, Items.GOLDEN_BOOTS)
-                .withId(new ResourceLocation(ArsInstrumentum.MODID, "novice_boots_from_archmage"))
+                .withId(new ResourceLocation(ArsInstrumentum.MODID, "sorcerer_boots_from_battlemage"))
                 .keepNbtOfReagent(true)
                 .build());
 

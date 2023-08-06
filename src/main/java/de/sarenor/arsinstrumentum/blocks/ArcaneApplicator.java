@@ -22,7 +22,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -34,12 +33,12 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -49,6 +48,7 @@ import java.util.stream.StreamSupport;
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.getNeighbours;
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 
+@SuppressWarnings("deprecation")
 public class ArcaneApplicator extends TickableModBlock implements EntityBlock, SimpleWaterloggedBlock {
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -67,11 +67,11 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     public static Block.Properties defaultProperties() {
-        return Block.Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(2.0f, 6.0f);
+        return Block.Properties.copy(Blocks.OAK_WOOD).sound(SoundType.WOOD).strength(2.0f, 6.0f);
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return switch (pState.getValue(FACING)) {
             case NORTH -> SHAPE_NORTH;
             case SOUTH -> SHAPE_SOUTH;
@@ -82,17 +82,12 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return SHAPE_COLLISION;
     }
 
     @Override
-    public boolean useShapeForLightOcclusion(BlockState pState) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter world, BlockPos pos, FluidState fluidState) {
+    public boolean useShapeForLightOcclusion(@NotNull BlockState pState) {
         return true;
     }
 
@@ -133,7 +128,7 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level worldIn, @NotNull BlockPos pos, @NotNull Block blockIn, @NotNull BlockPos fromPos, boolean isMoving) {
         boolean neighborSignal = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.above());
         boolean isTriggered = state.getValue(TRIGGERED);
         if (neighborSignal && !isTriggered) {
@@ -145,12 +140,12 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
         if (handIn != InteractionHand.MAIN_HAND)
             return InteractionResult.PASS;
         if (!world.isClientSide && world.getBlockEntity(pos) instanceof ArcaneApplicatorTile tile) {
             if (tile.getStack() != null && player.getItemInHand(handIn).isEmpty()) {
-                if (world.getBlockState(pos.above()).getMaterial() != Material.AIR)
+                if (!world.getBlockState(pos.above()).isAir())
                     return InteractionResult.SUCCESS;
                 ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), tile.getStack());
                 world.addFreshEntity(item);
@@ -170,11 +165,11 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     private boolean isHoldableItem(ItemStack itemStack) {
         Item placedItem = itemStack.getItem();
         return placedItem instanceof SpellParchment || placedItem instanceof CopyPasteSpellScroll
-                || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
+               || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
     }
 
     @Override
-    public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         super.playerWillDestroy(worldIn, pos, state, player);
         if (worldIn.getBlockEntity(pos) instanceof ArcaneApplicatorTile tile && tile.getStack() != null) {
             worldIn.addFreshEntity(new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getStack()));
@@ -182,19 +177,19 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+    public void tick(@NotNull BlockState blockState, @NotNull ServerLevel serverLevel, @NotNull BlockPos blockPos, @NotNull RandomSource randomSource) {
         getApplicableStack(serverLevel, blockPos)
                 .ifPresent(itemStack -> this.handleApplicationSignal(itemStack, serverLevel, blockPos));
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new ArcaneApplicatorTile(blockPos, blockState);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(BlockStateProperties.WATERLOGGED);
         builder.add(BlockStateProperties.TRIGGERED);
@@ -202,7 +197,7 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public FluidState getFluidState(BlockState state) {
+    public @NotNull FluidState getFluidState(BlockState state) {
         return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
@@ -215,16 +210,16 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
-    public boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
         return false;
     }
 
-    public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
+    public int getAnalogOutputSignal(@NotNull BlockState blockState, Level worldIn, @NotNull BlockPos pos) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 

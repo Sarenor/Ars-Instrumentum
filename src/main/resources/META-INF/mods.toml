@@ -4,21 +4,21 @@
 # Note that there are a couple of TOML lists in this file.
 # Find more information on toml format here:  https://github.com/toml-lang/toml
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
-modLoader="javafml" #mandatory
+modLoader = "javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[40,)" #mandatory (28 is current forge version)
+loaderVersion = "[47,)" #mandatory (47 is current forge version)
 # A URL to refer people to when problems occur with this mod
-issueTrackerURL="http://my.issue.tracker/" #optional
+issueTrackerURL = "https://github.com/Sarenor/Ars-Instrumentum/issues" #optional
 
-license="GNU Lesser General Public License v3.0"
+license = "GNU Lesser General Public License v3.0"
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
-modId="ars_instrumentum" #mandatory
+modId = "ars_instrumentum" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
-displayName="Ars Instrumentum" #mandatory
+version = "${file.jarVersion}" #mandatory
+# A display name for the mod
+displayName = "Ars Instrumentum" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -35,33 +35,21 @@ Ars Instrumentum is a small set of magical utilities and tools that I wanted to 
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.ars_instrumentum]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[40,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+# the modid of the dependency
+modId = "forge" #mandatory
+# Does this dependency have to exist - if not, ordering below must be specified
+mandatory = true #mandatory
+# The version range of the dependency
+versionRange = "[47.1.0,)" #mandatory
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering = "NONE"
+# Side this dependency is applied on - BOTH, CLIENT or SERVER
+side = "BOTH"
 # Here's another dependency
-[[dependencies.ars_instrumentum]]
-    modId="patchouli"
-    mandatory=true
-    versionRange="[1.18.2-67,)"
-    ordering="AFTER"
-    side="BOTH"
 
 [[dependencies.ars_instrumentum]]
-    modId="curios"
-    mandatory=true
-    versionRange="[1.18.2-5.0.6.3,)"
-    ordering="AFTER"
-    side="BOTH"
-[[dependencies.ars_instrumentum]]
     modId="ars_nouveau"
-    mandatory=true
-    versionRange="[3.4.5,)"
-    ordering="AFTER"
+mandatory = true
+versionRange = "[4.0,)"
+ordering = "AFTER"
     side="BOTH"

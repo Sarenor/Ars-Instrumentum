@@ -2,9 +2,9 @@ package de.sarenor.arsinstrumentum.client.renderer.tile;
 
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 
-public class GenericModel<T extends IAnimatable> extends com.hollingsworth.arsnouveau.client.renderer.tile.GenericModel<T> {
+public class GenericModel<T extends GeoAnimatable> extends com.hollingsworth.arsnouveau.client.renderer.tile.GenericModel<T> {
     public String path;
 
     public GenericModel(String name) {
@@ -19,18 +19,4 @@ public class GenericModel<T extends IAnimatable> extends com.hollingsworth.arsno
         return this;
     }
 
-    @Override
-    public ResourceLocation getModelResource(T iAnimatable) {
-        return modelLocation;
-    }
-
-    @Override
-    public ResourceLocation getTextureResource(T iAnimatable) {
-        return textLoc;
-    }
-
-    @Override
-    public ResourceLocation getAnimationResource(T iAnimatable) {
-        return animationLoc;
-    }
 }

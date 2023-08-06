@@ -4,14 +4,12 @@ import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.mana.IManaCap;
 import com.hollingsworth.arsnouveau.client.gui.book.GuiSpellBook;
-import com.hollingsworth.arsnouveau.common.capability.CapabilityRegistry;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.items.curios.NumericCharm;
 import de.sarenor.arsinstrumentum.setup.ArsInstrumentumConfig.Client;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,10 +27,11 @@ import static com.hollingsworth.arsnouveau.client.gui.GuiManaHUD.shouldDisplayBa
  */
 @SuppressWarnings("ALL")
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ArsInstrumentum.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class NumericManaHUD extends GuiComponent {
+public class NumericManaHUD {
     private static final Minecraft minecraft = Minecraft.getInstance();
 
     private static final ResourceLocation hudLoc = new ResourceLocation(ArsNouveau.MODID, "mana_hud");
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderSpellHUD(final RenderGuiOverlayEvent.Post event) {
         Player player = minecraft.player;
@@ -41,13 +40,13 @@ public class NumericManaHUD extends GuiComponent {
         }
         if (NumericCharm.hasCharm(player))
             if (Client.SHOW_MANA_ON_TOP.get()) {
-                drawTopHUD(event.getPoseStack(), player);
+                drawTopHUD(event.getGuiGraphics(), player);
             }else {
                 ArsNouveauAPI.ENABLE_DEBUG_NUMBERS = true;
             }
     }
 
-    private static void drawTopHUD(PoseStack ms, Player player) {
+    private static void drawTopHUD(GuiGraphics gg, Player player) {
 
         IManaCap mana = CapabilityRegistry.getMana(player).orElse(null);
 
@@ -55,7 +54,7 @@ public class NumericManaHUD extends GuiComponent {
             return;
         }
 
-        ArsNouveauAPI.getInstance().ENABLE_DEBUG_NUMBERS = false; //to hide on-bar numbers
+        ArsNouveauAPI.ENABLE_DEBUG_NUMBERS = false; //to hide on-bar numbers
         final boolean renderOnTop = true; //we always get here with true
 
         int offsetLeft = 10;
@@ -75,10 +74,9 @@ public class NumericManaHUD extends GuiComponent {
         }
         offsetLeft += maxWidth - minecraft.font.width(text);
 
-        drawString(ms, minecraft.font, text, offsetLeft, height, 0xFFFFFF);
+        gg.drawString(minecraft.font, text, offsetLeft, height, 0xFFFFFF, false);
         if (!renderOnTop) {
-            RenderSystem.setShaderTexture(0, new ResourceLocation(ArsNouveau.MODID, "textures/gui/manabar_gui_border" + ".png"));
-            blit(ms, 10, height - 8, 0, 18, 108, 20, 256, 256);
+            gg.blit(new ResourceLocation(ArsNouveau.MODID, "textures/gui/manabar_gui_border" + ".png"), 10, height - 8, 0, 18, 108, 20, 256, 256);
         }
 
     }

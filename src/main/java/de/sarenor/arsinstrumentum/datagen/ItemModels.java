@@ -12,13 +12,13 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
-import static com.hollingsworth.arsnouveau.api.RegistryHelper.getRegistryName;
+import static com.hollingsworth.arsnouveau.setup.registry.RegistryHelper.getRegistryName;
 
 @Log4j2
 public class ItemModels extends ItemModelProvider {
 
     public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, ArsInstrumentum.MODID, existingFileHelper);
+        super(generator.getPackOutput(), ArsInstrumentum.MODID, existingFileHelper);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ItemModels extends ItemModelProvider {
 
     private ResourceLocation itemTexture(final Item item) {
         final ResourceLocation name = registryName(item);
-        return new ResourceLocation(name.getNamespace(), "items" + "/" + name.getPath());
+        return new ResourceLocation(name.getNamespace(), "item" + "/" + name.getPath());
     }
 
     private ResourceLocation registryName(final Item item) {

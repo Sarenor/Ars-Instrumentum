@@ -1,49 +1,53 @@
 package de.sarenor.arsinstrumentum.client.renderer.tile;
 
+import com.hollingsworth.arsnouveau.client.ClientInfo;
 import com.hollingsworth.arsnouveau.client.renderer.item.GenericItemBlockRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import de.sarenor.arsinstrumentum.blocks.tiles.ArcaneApplicatorTile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import software.bernie.ars_nouveau.geckolib3.model.AnimatedGeoModel;
-import software.bernie.ars_nouveau.geckolib3.renderers.geo.GeoBlockRenderer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.item.ItemDisplayContext;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoBlockRenderer;
+
 
 public class ArcaneApplicatorRenderer extends GeoBlockRenderer<ArcaneApplicatorTile> {
-    public static AnimatedGeoModel<ArcaneApplicatorTile> arcane_applicator_model = new GenericModel<ArcaneApplicatorTile>("arcane_applicator");
+    public static GeoModel<ArcaneApplicatorTile> arcane_applicator_model = new GenericModel<>("arcane_applicator");
 
-    public ArcaneApplicatorRenderer(BlockEntityRendererProvider.Context p_i226006_1_) {
-        super(p_i226006_1_, arcane_applicator_model);
+    public ArcaneApplicatorRenderer() {
+        super(arcane_applicator_model);
     }
 
     public static GenericItemBlockRenderer getISTER() {
         return new GenericItemBlockRenderer(arcane_applicator_model);
     }
 
+
     @Override
-    public void render(ArcaneApplicatorTile tileEntityIn, float partialTicks, PoseStack matrixStack, MultiBufferSource iRenderTypeBuffer, int packedLightIn) {
-        super.render(tileEntityIn, partialTicks, matrixStack, iRenderTypeBuffer, packedLightIn);
+    public void actuallyRender(PoseStack poseStack, ArcaneApplicatorTile animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        double x = animatable.getBlockPos().getX();
+        double y = animatable.getBlockPos().getY();
+        double z = animatable.getBlockPos().getZ();
 
-        double x = tileEntityIn.getBlockPos().getX();
-        double y = tileEntityIn.getBlockPos().getY();
-        double z = tileEntityIn.getBlockPos().getZ();
-
-        if (tileEntityIn.getStack() == null || tileEntityIn.getStack().isEmpty())
+        if (animatable.getStack() == null || animatable.getStack().isEmpty())
             return;
 
-        if (tileEntityIn.entity == null || !ItemStack.matches(tileEntityIn.entity.getItem(), tileEntityIn.getStack())) {
-            tileEntityIn.entity = new ItemEntity(tileEntityIn.getLevel(), x, y, z, tileEntityIn.getStack());
-        }
+        poseStack.mulPose(Axis.YP.rotationDegrees((partialTick + (float) ClientInfo.ticksInGame) * 3f));
+        Minecraft.getInstance().getItemRenderer().renderStatic(animatable.getStack(),
+                ItemDisplayContext.FIXED,
+                packedLight,
+                packedOverlay,
+                poseStack,
+                bufferSource,
+                animatable.getLevel(),
+                (int) animatable.getBlockPos().asLong());
 
-        ItemEntity entityItem = tileEntityIn.entity;
-        matrixStack.pushPose();
-        tileEntityIn.frames += 1.5f * Minecraft.getInstance().getDeltaFrameTime();
-        entityItem.setYHeadRot(tileEntityIn.frames);
-        entityItem.age = (int) tileEntityIn.frames;
-        Minecraft.getInstance().getEntityRenderDispatcher().render(entityItem, 0.5, 1.2, 0.5,
-                entityItem.yRot, 2.0f, matrixStack, iRenderTypeBuffer, packedLightIn);
-        matrixStack.popPose();
+        poseStack.popPose();
+
     }
 }

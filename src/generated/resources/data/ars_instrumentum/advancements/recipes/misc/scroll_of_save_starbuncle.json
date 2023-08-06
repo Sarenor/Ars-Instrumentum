@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "ars_instrumentum:copy_paste_spell_scroll"
+        "recipe": "ars_instrumentum:scroll_of_save_starbuncle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "ars_instrumentum:copy_paste_spell_scroll"
+      "ars_instrumentum:scroll_of_save_starbuncle"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

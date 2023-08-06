@@ -69,15 +69,15 @@ public class ArmariumStorage {
         float ry = rand.nextFloat() * 0.8F + 0.1F;
         float rz = rand.nextFloat() * 0.8F + 0.1F;
 
-        ItemEntity entityItem = new ItemEntity(player.getLevel(),
+        ItemEntity entityItem = new ItemEntity(player.level(),
                 player.position().x + rx, player.position().y + ry, player.position().z + rz,
                 itemStack.copy());
 
         if (itemStack.hasTag()) {
-            entityItem.getItem().setTag(itemStack.getTag().copy());
+            entityItem.getItem().setTag(itemStack.getOrCreateTag().copy());
         }
 
-        player.getLevel().addFreshEntity(entityItem);
+        player.level().addFreshEntity(entityItem);
         itemStack.setCount(0);
     }
 

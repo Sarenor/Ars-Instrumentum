@@ -1,6 +1,5 @@
 package de.sarenor.arsinstrumentum.items;
 
-import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.util.NBTUtil;
 import com.hollingsworth.arsnouveau.common.block.tile.RelaySplitterTile;
 import com.hollingsworth.arsnouveau.common.block.tile.RelayTile;
@@ -16,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class RunicStorageStone extends ModItem {
     private static final String RUNIC_STORAGE_STONE_TAG_ID = "scroll_of_save_starbuncle_tag";
 
     public RunicStorageStone() {
-        super((new Properties()).stacksTo(1).tab(ArsNouveau.itemGroup));
+        super((new Properties()).stacksTo(1));
     }
 
     public static void apply(ItemStack stone, RelayTile relayTile, Player player) {
@@ -115,7 +114,7 @@ public class RunicStorageStone extends ModItem {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         if (context.getLevel().isClientSide || context.getPlayer() == null) {
             return super.useOn(context);
         }
@@ -134,11 +133,6 @@ public class RunicStorageStone extends ModItem {
         }
 
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
-        return false;
     }
 
     @Override
@@ -190,7 +184,7 @@ public class RunicStorageStone extends ModItem {
         List<BlockPos> blockPosList = new ArrayList<>();
         int counter = 0;
         while (NBTUtil.hasBlockPos(tag, direction + counter)) {
-            BlockPos pos = NBTUtil.getBlockPos(tag, direction + counter);
+            BlockPos pos = NBTUtil.getNullablePos(tag, direction + counter);
             if (!blockPosList.contains(pos))
                 blockPosList.add(pos);
             counter++;

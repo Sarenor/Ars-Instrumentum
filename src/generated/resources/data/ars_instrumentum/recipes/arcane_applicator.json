@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "A": {
       "item": "ars_nouveau:archwood_slab"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "ars_instrumentum:arcane_applicator"
-  }
+  },
+  "show_notification": true
 }
