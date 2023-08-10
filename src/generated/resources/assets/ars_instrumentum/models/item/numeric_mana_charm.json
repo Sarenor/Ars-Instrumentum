@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "ars_instrumentum:items/numeric_mana_charm"
+    "layer0": "ars_instrumentum:item/numeric_mana_charm"
   }
 }

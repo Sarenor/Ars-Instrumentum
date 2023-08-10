@@ -1,52 +1,31 @@
 package de.sarenor.arsinstrumentum.datagen;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.*;
 
 public class DefaultTableProvider extends LootTableProvider {
-    private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> tables = ImmutableList.of(
-            Pair.of(BlockLootTable::new, LootContextParamSets.BLOCK)
-    );
-
     public DefaultTableProvider(DataGenerator dataGeneratorIn) {
-        super(dataGeneratorIn);
+        super(dataGeneratorIn.getPackOutput(), new HashSet<>(), List.of(new LootTableProvider.SubProviderEntry(BlockLootTable::new, LootContextParamSets.BLOCK)));
     }
 
-    @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
-        return tables;
-    }
 
-    @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
-        map.forEach((p_218436_2_, p_218436_3_) -> {
-            LootTables.validate(validationtracker, p_218436_2_, p_218436_3_);
-        });
-    }
-
-    public static class BlockLootTable extends BlockLoot {
+    public static class BlockLootTable extends BlockLootSubProvider {
         public List<Block> list = new ArrayList<>();
 
+        protected BlockLootTable() {
+            super(Set.of(), FeatureFlags.REGISTRY.allFlags(), new HashMap<>());
+        }
+
         @Override
-        protected void addTables() {
+        protected void generate() {
             registerDropSelf(Registration.ARCANE_APPLICATOR.get());
         }
 
@@ -56,7 +35,7 @@ public class DefaultTableProvider extends LootTableProvider {
         }
 
         @Override
-        protected Iterable<Block> getKnownBlocks() {
+        protected @NotNull Iterable<Block> getKnownBlocks() {
             return list;
         }
 

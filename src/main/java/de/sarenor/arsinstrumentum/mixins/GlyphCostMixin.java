@@ -4,9 +4,9 @@ import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.item.ICasterTool;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.util.ManaUtil;
-import com.hollingsworth.arsnouveau.common.enchantment.EnchantmentRegistry;
 import com.hollingsworth.arsnouveau.common.items.Glyph;
 import com.hollingsworth.arsnouveau.common.spell.casters.ReactiveCaster;
+import com.hollingsworth.arsnouveau.setup.registry.EnchantmentRegistry;
 import de.sarenor.arsinstrumentum.items.curios.NumericCharm;
 import de.sarenor.arsinstrumentum.setup.ArsInstrumentumConfig;
 import net.minecraft.ChatFormatting;
@@ -42,11 +42,11 @@ public class GlyphCostMixin {
                 var casterData = casterTool.getSpellCaster(stack);
                 Spell spell = casterData.getSpell(casterData.getCurrentSlot());
                 if (spell.isEmpty()) return;
-                cost = spell.getDiscountedCost() - ManaUtil.getPlayerDiscounts(player, spell);
+                cost = spell.getCost() - ManaUtil.getPlayerDiscounts(player, spell, stack);
             } else if (stack.getEnchantmentLevel(EnchantmentRegistry.REACTIVE_ENCHANTMENT.get()) > 0) {
                 Spell casterData = new ReactiveCaster(stack).getSpell();
                 if (casterData.isEmpty()) return;
-                cost = casterData.getDiscountedCost() - ManaUtil.getPlayerDiscounts(player, casterData);
+                cost = casterData.getCost() - ManaUtil.getPlayerDiscounts(player, casterData, stack);
             } else return;
 
             pTooltipComponents.add(Component.translatable(NumericCharm.TOOLTIP_MESSAGE, cost).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE)).append(String.valueOf(cost)));

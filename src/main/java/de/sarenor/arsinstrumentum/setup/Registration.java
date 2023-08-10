@@ -1,6 +1,5 @@
 package de.sarenor.arsinstrumentum.setup;
 
-import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.common.items.RendererBlockItem;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.blocks.ArcaneApplicator;
@@ -29,7 +28,7 @@ public class Registration {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ArsInstrumentum.MODID);
 
     public static final String FAKE_WILDEN_TRIBUTE_ID = "fake_wilden_tribute";
-    public static final Item.Properties ITEM_PROPERTIES = new Item.Properties().tab(ArsNouveau.itemGroup);
+    public static final Item.Properties ITEM_PROPERTIES = new Item.Properties();
 
     public static final RegistryObject<Item> WIZARDS_ARMARIUM;
     public static final RegistryObject<Item> SCROLL_OF_SAVE_STARBUNCLE;

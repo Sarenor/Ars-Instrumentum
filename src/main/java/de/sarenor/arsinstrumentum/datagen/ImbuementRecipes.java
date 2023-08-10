@@ -2,7 +2,7 @@ package de.sarenor.arsinstrumentum.datagen;
 
 import com.hollingsworth.arsnouveau.common.crafting.recipes.ImbuementRecipe;
 import com.hollingsworth.arsnouveau.common.datagen.ImbuementRecipeProvider;
-import com.hollingsworth.arsnouveau.setup.ItemsRegistry;
+import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
@@ -12,7 +12,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.Tags;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 public class ImbuementRecipes extends ImbuementRecipeProvider {
@@ -25,10 +24,10 @@ public class ImbuementRecipes extends ImbuementRecipeProvider {
     }
 
     @Override
-    public void run(CachedOutput cache) throws IOException {
+    public void collectJsons(CachedOutput cache) {
         this.recipes.add((new ImbuementRecipe("fake_wilden_tribute", Ingredient.of(Tags.Items.STORAGE_BLOCKS_DIAMOND), new ItemStack(Registration.FAKE_WILDEN_TRIBUTE.get()), 5000)).withPedestalItem(ItemsRegistry.ARCHMAGE_SPELLBOOK).withPedestalItem(Items.NETHER_STAR).withPedestalItem(Items.TOTEM_OF_UNDYING));
 
-        Path output = this.generator.getOutputFolder();
+        Path output = this.generator.getPackOutput().getOutputFolder();
 
         for (ImbuementRecipe g : this.recipes) {
             Path path = getRecipePath(output, g.getId().getPath());
@@ -38,6 +37,6 @@ public class ImbuementRecipes extends ImbuementRecipeProvider {
     }
 
     public String getName() {
-        return "Imbuement";
+        return "Instrumentum Imbuement Recipes";
     }
 }

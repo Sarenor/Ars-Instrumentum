@@ -9,13 +9,12 @@ import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
 import com.hollingsworth.arsnouveau.common.entity.familiar.FamiliarEntity;
 import com.hollingsworth.arsnouveau.common.network.PacketSummonFamiliar;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.sarenor.arsinstrumentum.network.Networking;
 import de.sarenor.arsinstrumentum.network.WizardsArmariumChoiceMessage;
 import de.sarenor.arsinstrumentum.utils.CuriosUtil;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,14 +26,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import javax.annotation.Nullable;
@@ -42,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.hollingsworth.arsnouveau.common.event.FamiliarEvents.getFamiliars;
 import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
@@ -138,7 +135,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
                 .stream().map(FamiliarEntity::getHolderID).findFirst().orElse(null);
     }
 
-    private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {
+    private static RadialMenu<ItemStack> getRadialMenuProvider(ArmariumStorage armariumStorage) {
         return new RadialMenu<>((int slot) -> Networking.INSTANCE.sendToServer(new WizardsArmariumChoiceMessage(slot)),
                 getRadialMenuSlots(armariumStorage),
                 SecondaryIconPosition.EAST,
@@ -146,26 +143,26 @@ public class WizardsArmarium extends ArsNouveauCurio {
                 0);
     }
 
-    private static List<RadialMenuSlot<Item>> getRadialMenuSlots(ArmariumStorage armariumStorage) {
-        List<RadialMenuSlot<Item>> radialMenuSlots = new ArrayList<>();
+    private static List<RadialMenuSlot<ItemStack>> getRadialMenuSlots(ArmariumStorage armariumStorage) {
+        List<RadialMenuSlot<ItemStack>> radialMenuSlots = new ArrayList<>();
         radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().getOrDefault(Slots.SLOT_ONE, new ArmariumSlot())));
         radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().getOrDefault(Slots.SLOT_TWO, new ArmariumSlot())));
         radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().getOrDefault(Slots.SLOT_THREE, new ArmariumSlot())));
         return radialMenuSlots;
     }
 
-    private static RadialMenuSlot<Item> getRadialMenuSlot(ArmariumSlot armariumSlot) {
-        Item primaryIcon = armariumSlot.getSpellfoci().stream().map(ItemStack::getItem).findFirst().orElse(null);
-        List<Item> secondaryIcons = armariumSlot.getArmor().stream().map(ItemStack::getItem).collect(Collectors.toList());
+    private static RadialMenuSlot<ItemStack> getRadialMenuSlot(ArmariumSlot armariumSlot) {
+        ItemStack primaryIcon = armariumSlot.getSpellfoci().stream().findFirst().orElse(null);
+        List<ItemStack> secondaryIcons = new ArrayList<>(armariumSlot.getArmor());
         return new RadialMenuSlot<>("", primaryIcon, secondaryIcons);
     }
 
-    public static void renderItemAsNonTransparentIcon(Item providedItem, PoseStack poseStack, int positionX, int positionY, int size, boolean renderTransparent) {
+    public static void renderItemAsNonTransparentIcon(ItemStack providedItem, GuiGraphics poseStack, int positionX, int positionY, int size, boolean renderTransparent) {
         RenderUtils.drawItemAsIcon(providedItem, poseStack, positionX, positionY, size, false);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level world, @NotNull Player player, @NotNull InteractionHand handIn) {
         if (world.isClientSide) {
             return super.use(world, player, handIn);
         }
@@ -177,11 +174,6 @@ public class WizardsArmarium extends ArsNouveauCurio {
         }
 
         return new InteractionResultHolder<>(InteractionResult.PASS, heldArmarium);
-    }
-
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
-        return false;
     }
 
     @Override

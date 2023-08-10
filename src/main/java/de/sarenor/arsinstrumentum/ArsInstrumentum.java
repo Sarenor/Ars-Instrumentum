@@ -1,10 +1,12 @@
 package de.sarenor.arsinstrumentum;
 
+import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
 import de.sarenor.arsinstrumentum.network.Networking;
 import de.sarenor.arsinstrumentum.setup.ArsInstrumentumConfig;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +27,16 @@ public class ArsInstrumentum {
         Registration.init(bus);
         bus.addListener(this::setup);
         bus.addListener(this::doClientStuff);
+        bus.addListener(this::doTabsStuff);
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    private void doTabsStuff(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTab() == CreativeTabRegistry.BLOCKS.get()) {
+            for (var item : Registration.ITEMS.getEntries()) {
+                event.accept(item::get);
+            }
+        }
     }
 
     private void setup(final FMLCommonSetupEvent event) {

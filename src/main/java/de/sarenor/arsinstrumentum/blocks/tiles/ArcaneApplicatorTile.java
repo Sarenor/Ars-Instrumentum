@@ -22,20 +22,20 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
-import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationData;
-import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationFactory;
-import software.bernie.ars_nouveau.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, IAnimatable {
+public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, GeoBlockEntity {
     public static final String ARCANE_APPLICATOR_TILE_ID = "arcane_applicator_tile";
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
     public ItemEntity entity;
     public float frames;
-    AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
     private ItemStack stack = ItemStack.EMPTY;
 
     public ArcaneApplicatorTile(BlockEntityType<?> tileEntityTypeIn, BlockPos blockPos, BlockState blockState) {
@@ -49,7 +49,7 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     @Override
     public void load(@NotNull CompoundTag compound) {
         super.load(compound);
-        this.stack = compound.contains("itemStack") ? ItemStack.of((CompoundTag) compound.get("itemStack")) : ItemStack.EMPTY;
+        this.stack = compound.contains("itemStack") ? ItemStack.of(compound.getCompound("itemStack")) : ItemStack.EMPTY;
     }
 
     @Override
@@ -144,12 +144,12 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
 
     }
 
     @Override
-    public AnimationFactory getFactory() {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
         return factory;
     }
 }

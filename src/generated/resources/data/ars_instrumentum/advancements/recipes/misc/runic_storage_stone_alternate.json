@@ -30,5 +30,6 @@
     "recipes": [
       "ars_instrumentum:runic_storage_stone_alternate"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
