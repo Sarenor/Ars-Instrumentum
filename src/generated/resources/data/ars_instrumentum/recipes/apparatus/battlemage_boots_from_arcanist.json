@@ -1,0 +1,18 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "output": {
+    "item": "ars_nouveau:battlemage_boots"
+  },
+  "pedestalItems": [
+    {
+      "item": "minecraft:diamond_boots"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:arcanist_boots"
+    }
+  ],
+  "sourceCost": 0
+}

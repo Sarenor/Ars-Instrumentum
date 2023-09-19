@@ -9,7 +9,6 @@ import de.sarenor.arsinstrumentum.setup.Registration;
 import lombok.extern.log4j.Log4j2;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -43,7 +42,7 @@ public class ApparatusRecipes extends ApparatusRecipeProvider {
             if (g instanceof EnchantingApparatusRecipe apparatusRecipe) {
                 System.out.println(g);
                 Path path = getRecipePath(output, apparatusRecipe.getId().getPath());
-                DataProvider.saveStable(cache, apparatusRecipe.asRecipe(), path);
+                saveStable(cache, apparatusRecipe.asRecipe(), path);
             }
         }
         log.info("ArsInstrumentum: Recipe-Generation ended");
