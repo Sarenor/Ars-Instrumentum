@@ -6,7 +6,6 @@ import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -31,7 +30,7 @@ public class ImbuementRecipes extends ImbuementRecipeProvider {
 
         for (ImbuementRecipe g : this.recipes) {
             Path path = getRecipePath(output, g.getId().getPath());
-            DataProvider.saveStable(cache, g.asRecipe(), path);
+            saveStable(cache, g.asRecipe(), path);
         }
 
     }

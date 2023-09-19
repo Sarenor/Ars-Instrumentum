@@ -21,8 +21,9 @@ public class NumericCharm extends ArsNouveauCurio {
     @SuppressWarnings("ConstantConditions")
     public static boolean hasCharm(Player player) {
         if (ArsInstrumentumConfig.Client.SHOW_MANA_NUM.get()) return true;
-        IItemHandlerModifiable items = CuriosApi.getCuriosHelper().getEquippedCurios(player).orElse(null);
-        //Blame Bailey for this @NotNull infringement
+        var curios = CuriosApi.getCuriosInventory(player).orElse(null);
+        if (curios == null) return false;
+        IItemHandlerModifiable items = curios.getEquippedCurios();
         if (items != null) {
             for (int i = 0; i < items.getSlots(); ++i) {
                 Item item = items.getStackInSlot(i).getItem();
