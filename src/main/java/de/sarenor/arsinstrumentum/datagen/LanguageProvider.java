@@ -3,24 +3,22 @@ package de.sarenor.arsinstrumentum.datagen;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.items.curios.NumericCharm;
 import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
-import lombok.extern.log4j.Log4j2;
 import net.minecraft.data.DataGenerator;
 
 import static de.sarenor.arsinstrumentum.client.keybindings.ModKeyBindings.CHOOSE_ARMARIUM_SLOT_ID;
 import static de.sarenor.arsinstrumentum.client.keybindings.ModKeyBindings.SWITCH_ARMARIUM_SLOT_ID;
 import static de.sarenor.arsinstrumentum.setup.Registration.*;
 
-@Log4j2
-public class LanguageProvider extends net.minecraftforge.common.data.LanguageProvider {
+public class LanguageProvider extends net.neoforged.neoforge.common.data.LanguageProvider {
 
 
     public LanguageProvider(DataGenerator gen, String locale) {
-        super(gen, ArsInstrumentum.MODID, locale);
+        super(gen.getPackOutput(), ArsInstrumentum.MODID, locale);
     }
 
     @Override
     protected void addTranslations() {
-        log.info("ArsInstrumentum: AddTranslation started");
+        //log.info("ArsInstrumentum: AddTranslation started");
         add(WIZARDS_ARMARIUM.get(), "Wizards Armarium");
         add(SCROLL_OF_SAVE_STARBUNCLE.get(), "Scroll of Save Starbuncle");
         add(RUNIC_STORAGE_STONE.get(), "Runic Stone of Storage");
@@ -33,7 +31,7 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
         add(WizardsArmarium.SWITCHED_TO_NO_HOTBAR, "Wizards Armarium will not switch Hotbar Items");
         add(WizardsArmarium.SWITCHED_TO_HOTBAR, "Wizards Armarium will switch Hotbar Items");
         add(NumericCharm.TOOLTIP_MESSAGE, "Mana cost : ");
-        log.info("ArsInstrumentum: AddTranslation ended");
+        //log.info("ArsInstrumentum: AddTranslation ended");
     }
 
 }

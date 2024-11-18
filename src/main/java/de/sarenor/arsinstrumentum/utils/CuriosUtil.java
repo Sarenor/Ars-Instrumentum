@@ -3,6 +3,7 @@ package de.sarenor.arsinstrumentum.utils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
@@ -15,10 +16,7 @@ public class CuriosUtil {
     private static final String SPELLFOCUS_CURIO_ID = "an_focus";
 
     public static Optional<IDynamicStackHandler> getSpellfocusStackHandler(ServerPlayer player) {
-        return CuriosApi.getCuriosHelper().getCuriosHandler(player)
-                .map(iCuriosItemHandler -> iCuriosItemHandler)
-                .flatMap(map -> map.getStacksHandler(SPELLFOCUS_CURIO_ID))
-                .map(ICurioStacksHandler::getStacks);
+        return CuriosApi.getCuriosInventory(player).flatMap(iCuriosItemHandler -> iCuriosItemHandler.getStacksHandler(SPELLFOCUS_CURIO_ID).map(ICurioStacksHandler::getStacks));
     }
 
     public static List<ItemStack> getSpellfoci(ServerPlayer player) {

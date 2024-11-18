@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "ars_instrumentum:items/wizards_armarium"
+    "layer0": "ars_instrumentum:item/wizards_armarium"
   }
 }

@@ -2,18 +2,17 @@ package de.sarenor.arsinstrumentum.client.keybindings;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
-import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
 
-@Mod.EventBusSubscriber(modid = ArsInstrumentum.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-@Log4j2
+@EventBusSubscriber(modid = ArsInstrumentum.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ModKeyBindings {
 
     public static final String SWITCH_ARMARIUM_SLOT_ID = "key.ars_nouveau.switch_armarium_slot";

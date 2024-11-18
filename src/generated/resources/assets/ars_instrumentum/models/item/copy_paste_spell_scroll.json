@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "ars_instrumentum:items/copy_paste_spell_scroll"
+    "layer0": "ars_instrumentum:item/copy_paste_spell_scroll"
   }
 }

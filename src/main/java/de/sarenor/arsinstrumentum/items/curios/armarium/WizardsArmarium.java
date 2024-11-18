@@ -7,15 +7,14 @@ import com.hollingsworth.arsnouveau.client.gui.radial_menu.RadialMenuSlot;
 import com.hollingsworth.arsnouveau.client.gui.radial_menu.SecondaryIconPosition;
 import com.hollingsworth.arsnouveau.client.gui.utils.RenderUtils;
 import com.hollingsworth.arsnouveau.common.entity.familiar.FamiliarEntity;
+import com.hollingsworth.arsnouveau.common.network.Networking;
 import com.hollingsworth.arsnouveau.common.network.PacketSummonFamiliar;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import de.sarenor.arsinstrumentum.network.Networking;
 import de.sarenor.arsinstrumentum.network.WizardsArmariumChoiceMessage;
+import de.sarenor.arsinstrumentum.setup.Registration;
 import de.sarenor.arsinstrumentum.utils.CuriosUtil;
-import lombok.extern.log4j.Log4j2;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,31 +23,24 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.hollingsworth.arsnouveau.common.event.FamiliarEvents.getFamiliars;
+import static de.sarenor.arsinstrumentum.setup.Registration.ARMARIUM_STORAGE;
 import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
 import static de.sarenor.arsinstrumentum.utils.IterableUtils.iterableToList;
 
-@Log4j2
 public class WizardsArmarium extends ArsNouveauCurio {
     public static final String WIZARDS_ARMARIUM_ID = "wizards_armarium";
     public static final String SWITCHED_TO_NO_HOTBAR = "instrumentum.armarium.hotbar_no_switch";
@@ -56,44 +48,60 @@ public class WizardsArmarium extends ArsNouveauCurio {
     private static final int HOTBAR_SIZE = 9;
     private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
+    public WizardsArmarium(Properties properties) {
+        super(properties.component(ARMARIUM_STORAGE, new ArmariumStorage()));
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static void openSwitchRadialMenu(Player player) {
-        ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
-        Minecraft.getInstance().setScreen(new GuiRadialMenu<>(getRadialMenuProvider(armariumStorage)));
+        var armariumOptional = CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get()));
+        armariumOptional.ifPresent(slotResult -> {
+            ArmariumStorage armariumStorage = slotResult.stack().get(ARMARIUM_STORAGE.get());
+            if (armariumStorage == null) return;
+            Minecraft.getInstance().setScreen(new GuiRadialMenu<>(getRadialMenuProvider(armariumStorage)));
+        });
     }
 
-    public static void handleArmariumChoice(ServerPlayer player, int choosenSlot, Supplier<NetworkEvent.Context> ctx) {
-        ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
-        ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
-                player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), Slots.getSlotForInt(choosenSlot));
+    public static void handleArmariumChoice(ServerPlayer player, int choosenSlot) {
+        var armariumOptional = CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get()));
+        armariumOptional.ifPresent(slotResult -> {
+            ArmariumStorage armariumStorage = slotResult.stack().get(ARMARIUM_STORAGE.get());
+            if (armariumStorage == null) return;
+            ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
+                    player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), Slots.getSlotForInt(choosenSlot));
 
-        setArmor(player, armariumSlot.getArmor());
-        if (armariumStorage.isHotbarSwitch()) {
-            setHotbar(player, armariumSlot.getHotbar());
-        }
-        setFamiliar(player, armariumSlot.getFamiliarId(), ctx);
-        CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
+            setArmor(player, armariumSlot.armor());
+            if (armariumStorage.isHotbarSwitch()) {
+                setHotbar(player, armariumSlot.hotbar());
+            }
+            setFamiliar(player, armariumSlot.familiarId());
+            CuriosUtil.setSpellfoci(player, armariumSlot.spellfoci());
+        });
     }
 
-    public static void handleArmariumSwitch(ServerPlayer player, Supplier<NetworkEvent.Context> ctx) {
-        ArmariumStorage armariumStorage = new ArmariumStorage(
-                CuriosApi.getCuriosHelper().findFirstCurio(player, WIZARDS_ARMARIUM.get()).get().stack());
-        ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
-                player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), null);
+    public static void handleArmariumSwitch(ServerPlayer player) {
+        var armariumOptional = CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get()));
+        armariumOptional.ifPresent(slotResult -> {
+            ArmariumStorage armariumStorage = slotResult.stack().get(ARMARIUM_STORAGE.get());
+            if (armariumStorage == null) return;
 
-        setArmor(player, armariumSlot.getArmor());
-        if (armariumStorage.isHotbarSwitch()) {
-            setHotbar(player, armariumSlot.getHotbar());
-        }
-        setFamiliar(player, armariumSlot.getFamiliarId(), ctx);
-        CuriosUtil.setSpellfoci(player, armariumSlot.getSpellfoci());
+            ArmariumSlot armariumSlot = armariumStorage.storeAndGet(iterableToList(player.getArmorSlots()),
+                    player.getInventory().items.subList(0, 9), CuriosUtil.getSpellfoci(player), getFamiliarId(player), null);
+
+            setArmor(player, armariumSlot.armor());
+            if (armariumStorage.isHotbarSwitch()) {
+                setHotbar(player, armariumSlot.hotbar());
+            }
+            setFamiliar(player, armariumSlot.familiarId());
+            CuriosUtil.setSpellfoci(player, armariumSlot.spellfoci());
+        });
     }
+
 
     public static void handleModeSwitch(ItemStack itemStack, Player player) {
-        ArmariumStorage storage = new ArmariumStorage(itemStack);
-        storage.switchIsHotbarSwitch(player);
+        ArmariumStorage storage = itemStack.getOrDefault(ARMARIUM_STORAGE.get(), new ArmariumStorage());
+        if (storage == null) return;
+        itemStack.set(Registration.ARMARIUM_STORAGE.get(), storage.switchHotbarMode());
         PortUtil.sendMessage(player, Component.translatable(
                 storage.isHotbarSwitch() ? SWITCHED_TO_HOTBAR : SWITCHED_TO_NO_HOTBAR)
         );
@@ -103,7 +111,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
     private static void setArmor(ServerPlayer player, List<ItemStack> armorItems) {
         for (EquipmentSlot equipmentSlot : ARMOR_SLOTS) {
             Optional<ItemStack> armorItem = armorItems.stream()
-                    .filter(itemStack -> LivingEntity.getEquipmentSlotForItem(itemStack).equals(equipmentSlot))
+                    .filter(itemStack -> player.getEquipmentSlotForItem(itemStack).equals(equipmentSlot))
                     .findFirst();
             player.setItemSlot(equipmentSlot, armorItem.orElse(ItemStack.EMPTY));
         }
@@ -120,16 +128,16 @@ public class WizardsArmarium extends ArsNouveauCurio {
         }
     }
 
-    private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId, Supplier<NetworkEvent.Context> ctx) {
+    private static void setFamiliar(ServerPlayer player, ResourceLocation familiarHolderId) {
         try {
             if (familiarHolderId != null) {
-                new PacketSummonFamiliar(familiarHolderId).handle(ctx);
+                Networking.sendToServer(new PacketSummonFamiliar(familiarHolderId));
             } else {
                 getFamiliars(familiarEntity -> familiarEntity.getOwner() != null && familiarEntity.getOwner().equals(player))
                         .stream().findFirst().ifPresent(familiarEntity -> familiarEntity.remove(Entity.RemovalReason.DISCARDED));
             }
         } catch (Exception e) {
-            log.error(e);
+            e.printStackTrace();
         }
     }
 
@@ -138,34 +146,36 @@ public class WizardsArmarium extends ArsNouveauCurio {
                 .stream().map(FamiliarEntity::getHolderID).findFirst().orElse(null);
     }
 
-    private static RadialMenu<Item> getRadialMenuProvider(ArmariumStorage armariumStorage) {
-        return new RadialMenu<>((int slot) -> Networking.INSTANCE.sendToServer(new WizardsArmariumChoiceMessage(slot)),
+    private static RadialMenu<ItemStack> getRadialMenuProvider(ArmariumStorage armariumStorage) {
+        return new RadialMenu<>((int slot) -> Networking.sendToServer(new WizardsArmariumChoiceMessage(slot)),
                 getRadialMenuSlots(armariumStorage),
                 SecondaryIconPosition.EAST,
                 WizardsArmarium::renderItemAsNonTransparentIcon,
                 0);
     }
 
-    private static List<RadialMenuSlot<Item>> getRadialMenuSlots(ArmariumStorage armariumStorage) {
-        List<RadialMenuSlot<Item>> radialMenuSlots = new ArrayList<>();
-        radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().getOrDefault(Slots.SLOT_ONE, new ArmariumSlot())));
-        radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().getOrDefault(Slots.SLOT_TWO, new ArmariumSlot())));
-        radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().getOrDefault(Slots.SLOT_THREE, new ArmariumSlot())));
+    private static List<RadialMenuSlot<ItemStack>> getRadialMenuSlots(ArmariumStorage armariumStorage) {
+        List<RadialMenuSlot<ItemStack>> radialMenuSlots = new ArrayList<>();
+        radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().slots().getOrDefault(Slots.SLOT_ONE, new ArmariumSlot())));
+        radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().slots().getOrDefault(Slots.SLOT_TWO, new ArmariumSlot())));
+        radialMenuSlots.add(getRadialMenuSlot(armariumStorage.getArmariumSlots().slots().getOrDefault(Slots.SLOT_THREE, new ArmariumSlot())));
         return radialMenuSlots;
     }
 
-    private static RadialMenuSlot<Item> getRadialMenuSlot(ArmariumSlot armariumSlot) {
-        Item primaryIcon = armariumSlot.getSpellfoci().stream().map(ItemStack::getItem).findFirst().orElse(null);
-        List<Item> secondaryIcons = armariumSlot.getArmor().stream().map(ItemStack::getItem).collect(Collectors.toList());
+    private static RadialMenuSlot<ItemStack> getRadialMenuSlot(ArmariumSlot armariumSlot) {
+        ItemStack primaryIcon = armariumSlot.spellfoci().stream().findFirst().orElse(null);
+        List<ItemStack> secondaryIcons = new ArrayList<>(armariumSlot.armor());
         return new RadialMenuSlot<>("", primaryIcon, secondaryIcons);
     }
 
-    public static void renderItemAsNonTransparentIcon(Item providedItem, PoseStack poseStack, int positionX, int positionY, int size, boolean renderTransparent) {
+    public static void renderItemAsNonTransparentIcon(ItemStack providedItem, GuiGraphics poseStack, int positionX,
+                                                      int positionY, int size, boolean renderTransparent) {
         RenderUtils.drawItemAsIcon(providedItem, poseStack, positionX, positionY, size, false);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level world, @NotNull Player
+            player, @NotNull InteractionHand handIn) {
         if (world.isClientSide) {
             return super.use(world, player, handIn);
         }
@@ -179,15 +189,12 @@ public class WizardsArmarium extends ArsNouveauCurio {
         return new InteractionResultHolder<>(InteractionResult.PASS, heldArmarium);
     }
 
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
-        return false;
-    }
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag p_77624_4_) {
-        ArmariumStorage armariumStorage = new ArmariumStorage(stack);
-        tooltip.addAll(armariumStorage.getTooltip());
-    }
+//    @Override
+//    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip2, @NotNull TooltipFlag flagIn) {
+//        super.appendHoverText(stack, context, tooltip2, flagIn);
+//        ArmariumStorage armariumStorage = new ArmariumStorage(stack);
+//        tooltip.addAll(armariumStorage.getTooltip());
+//    }
 
 }

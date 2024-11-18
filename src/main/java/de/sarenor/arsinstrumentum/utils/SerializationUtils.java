@@ -1,12 +1,20 @@
 package de.sarenor.arsinstrumentum.utils;
 
+import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
+import de.sarenor.arsinstrumentum.items.curios.armarium.Slots;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public class SerializationUtils {
 
@@ -15,20 +23,17 @@ public class SerializationUtils {
     private static final String Y = "y";
     private static final String Z = "z";
 
-    public static ListTag serializeItemList(List<ItemStack> items) {
+    public static ListTag serializeItemList(List<ItemStack> items, RegistryAccess registryAccess) {
         ListTag itemList = new ListTag();
-        items.forEach((itemstack) -> itemList.add(itemstack.serializeNBT()));
+        items.forEach((itemstack) -> itemList.add(itemstack.saveOptional(registryAccess)));
         return itemList;
     }
 
-    public static List<ItemStack> deserializeItemList(CompoundTag compoundTag, String tag) {
+    public static List<ItemStack> deserializeItemList(RegistryFriendlyByteBuf buf) {
         List<ItemStack> itemStacks = new ArrayList<>();
-        if (compoundTag.contains(tag)) {
-            ListTag itemList = compoundTag.getList(tag, COMPOUND_TAG_TYPE);
-            for (int i = 0; i < itemList.size(); i++) {
-                itemStacks.add(ItemStack.of(itemList.getCompound(i)));
-            }
-            return itemStacks;
+        int size = buf.readInt();
+        for (int i = 0; i < size; i++) {
+            itemStacks.add(ItemStack.OPTIONAL_STREAM_CODEC.decode(buf));
         }
         return itemStacks;
     }
@@ -58,5 +63,18 @@ public class SerializationUtils {
 
     public static BlockPos deserializeBlockPos(CompoundTag serializedBlockPosition) {
         return new BlockPos(serializedBlockPosition.getInt(X), serializedBlockPosition.getInt(Y), serializedBlockPosition.getInt(Z));
+    }
+
+    public static <MapVal, Obj> Codec<Obj> slotMap(Codec<MapVal> codec, Function<Map<Slots, MapVal>, Obj> constructor, Function<Obj, Map<Slots, MapVal>> intMap){
+        return Codec.unboundedMap(Codec.STRING, codec).xmap((stringMap) ->{
+            var builder = ImmutableMap.<Slots, MapVal>builder();
+            stringMap.forEach((key, value) -> builder.put(Slots.getSlotForInt(Integer.parseInt(key)), value));
+            return constructor.apply(builder.build());
+        }, obj -> {
+            var ints = intMap.apply(obj);
+            var builder = ImmutableMap.<String, MapVal>builder();
+            ints.forEach((key, value) -> builder.put(key.toString(), value));
+            return builder.build();
+        });
     }
 }

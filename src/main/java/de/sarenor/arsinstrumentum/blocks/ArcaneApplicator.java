@@ -1,28 +1,22 @@
 package de.sarenor.arsinstrumentum.blocks;
 
-import com.hollingsworth.arsnouveau.api.spell.ISpellCaster;
-import com.hollingsworth.arsnouveau.api.spell.SpellCaster;
+import com.hollingsworth.arsnouveau.api.registry.SpellCasterRegistry;
 import com.hollingsworth.arsnouveau.common.block.TickableModBlock;
 import com.hollingsworth.arsnouveau.common.block.tile.BasicSpellTurretTile;
-import com.hollingsworth.arsnouveau.common.block.tile.RelayTile;
-import com.hollingsworth.arsnouveau.common.entity.Starbuncle;
 import com.hollingsworth.arsnouveau.common.items.SpellParchment;
 import de.sarenor.arsinstrumentum.blocks.tiles.ArcaneApplicatorTile;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
-import de.sarenor.arsinstrumentum.items.RunicStorageStone;
-import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -34,21 +28,19 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.getNeighbours;
-import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 
+@SuppressWarnings("deprecation")
 public class ArcaneApplicator extends TickableModBlock implements EntityBlock, SimpleWaterloggedBlock {
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -67,11 +59,11 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     public static Block.Properties defaultProperties() {
-        return Block.Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(2.0f, 6.0f);
+        return Block.Properties.ofFullCopy(Blocks.OAK_WOOD).sound(SoundType.WOOD).strength(2.0f, 6.0f);
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return switch (pState.getValue(FACING)) {
             case NORTH -> SHAPE_NORTH;
             case SOUTH -> SHAPE_SOUTH;
@@ -82,58 +74,53 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return SHAPE_COLLISION;
     }
 
     @Override
-    public boolean useShapeForLightOcclusion(BlockState pState) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldDisplayFluidOverlay(BlockState state, BlockAndTintGetter world, BlockPos pos, FluidState fluidState) {
+    public boolean useShapeForLightOcclusion(@NotNull BlockState pState) {
         return true;
     }
 
     private void handleApplicationSignal(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-        if (itemStack.getItem() instanceof ScrollOfSaveStarbuncle) {
-            handleStarbuncleApply(itemStack, serverLevel, blockPos);
-        } else if (itemStack.getItem() instanceof RunicStorageStone) {
-            handleRelayApply(itemStack, serverLevel, blockPos);
-        } else if (itemStack.getItem() instanceof CopyPasteSpellScroll || itemStack.getItem() instanceof SpellParchment) {
-            handleSpellturretApply(itemStack, serverLevel, blockPos);
+//        if (itemStack.getItem() instanceof ScrollOfSaveStarbuncle) {
+//            handleStarbuncleApply(itemStack, serverLevel, blockPos);
+//        } else if (itemStack.getItem() instanceof RunicStorageStone) {
+//            handleRelayApply(itemStack, serverLevel, blockPos);
+//        } else if (itemStack.getItem() instanceof CopyPasteSpellScroll || itemStack.getItem() instanceof SpellParchment) {
+//            handleSpellturretApply(itemStack, serverLevel, blockPos);
+//        }
+    }
+
+//    private void handleStarbuncleApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
+//        // Gets all Starbuncles with a bound bed that is adjacent to the Arcane Applicator
+//        serverLevel.getEntitiesOfClass(Starbuncle.class, new AABB(blockPos.north(10).west(10).below(6), blockPos.south(10).east(10).above(6))).stream()
+//                .filter(starbuncle -> isNeighbour(blockPos, starbuncle.data.bedPos))
+//                .forEach(starbuncle -> ScrollOfSaveStarbuncle.apply(itemStack, starbuncle, null));
+//    }
+//
+//    private void handleRelayApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
+//        StreamSupport.stream(getNeighbours(blockPos).spliterator(), false)
+//                .map(serverLevel::getBlockEntity)
+//                .filter(blockEntity -> blockEntity instanceof RelayTile)
+//                .forEach(blockEntity -> RunicStorageStone.apply(itemStack, (RelayTile) blockEntity, null));
+//    }
+
+    private void handleSpellturretApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
+        var copyPasteSpellcaster = SpellCasterRegistry.from(itemStack);
+        if (copyPasteSpellcaster == null)
+            return;
+        for (BlockPos pos : getNeighbours(blockPos)) {
+            BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
+            if (blockEntity instanceof BasicSpellTurretTile entity) {
+                entity.setSpell(copyPasteSpellcaster.getSpell());
+            }
         }
     }
 
-    private void handleStarbuncleApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-        // Gets all Starbuncles with a bound bed that is adjacent to the Arcane Applicator
-        serverLevel.getEntitiesOfClass(Starbuncle.class, new AABB(blockPos.north(10).west(10).below(6), blockPos.south(10).east(10).above(6))).stream()
-                .filter(starbuncle -> isNeighbour(blockPos, starbuncle.data.bedPos))
-                .forEach(starbuncle -> ScrollOfSaveStarbuncle.apply(itemStack, starbuncle, null));
-    }
-
-    private void handleRelayApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-        StreamSupport.stream(getNeighbours(blockPos).spliterator(), false)
-                .map(serverLevel::getBlockEntity)
-                .filter(blockEntity -> blockEntity instanceof RelayTile)
-                .forEach(blockEntity -> RunicStorageStone.apply(itemStack, (RelayTile) blockEntity, null));
-    }
-
-    private void handleSpellturretApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-        ISpellCaster copyPasteSpellcaster = new SpellCaster(itemStack);
-        StreamSupport.stream(getNeighbours(blockPos).spliterator(), false)
-                .map(serverLevel::getBlockEntity)
-                .filter(blockEntity -> blockEntity instanceof BasicSpellTurretTile)
-                .forEach(blockEntity -> {
-                    ((BasicSpellTurretTile) blockEntity).spellCaster.setSpell(copyPasteSpellcaster.getSpell());
-                    ((BasicSpellTurretTile) blockEntity).spellCaster.setColor(copyPasteSpellcaster.getColor());
-                    ((BasicSpellTurretTile) blockEntity).spellCaster.setSpellName(copyPasteSpellcaster.getSpellName());
-                });
-    }
-
     @Override
-    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level worldIn, @NotNull BlockPos pos, @NotNull Block blockIn, @NotNull BlockPos fromPos, boolean isMoving) {
         boolean neighborSignal = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.above());
         boolean isTriggered = state.getValue(TRIGGERED);
         if (neighborSignal && !isTriggered) {
@@ -145,56 +132,56 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        if (handIn != InteractionHand.MAIN_HAND)
-            return InteractionResult.PASS;
-        if (!world.isClientSide && world.getBlockEntity(pos) instanceof ArcaneApplicatorTile tile) {
-            if (tile.getStack() != null && player.getItemInHand(handIn).isEmpty()) {
-                if (world.getBlockState(pos.above()).getMaterial() != Material.AIR)
-                    return InteractionResult.SUCCESS;
-                ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), tile.getStack());
-                world.addFreshEntity(item);
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if (hand != InteractionHand.MAIN_HAND)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ArcaneApplicatorTile tile) {
+            if (tile.getStack() != null && player.getItemInHand(hand).isEmpty()) {
+                if (!level.getBlockState(pos.above()).isAir())
+                    return ItemInteractionResult.SUCCESS;
+                ItemEntity item = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), tile.getStack());
+                level.addFreshEntity(item);
                 tile.setStack(ItemStack.EMPTY);
             } else if (!player.getInventory().getSelected().isEmpty() && isHoldableItem(player.getInventory().getSelected())) {
                 if (tile.getStack() != null) {
-                    ItemEntity item = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), tile.getStack());
-                    world.addFreshEntity(item);
+                    ItemEntity item = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), tile.getStack());
+                    level.addFreshEntity(item);
                 }
                 tile.setStack(player.getInventory().removeItem(player.getInventory().selected, 1));
             }
-            world.sendBlockUpdated(pos, state, state, 2);
+            level.sendBlockUpdated(pos, state, state, 2);
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     private boolean isHoldableItem(ItemStack itemStack) {
         Item placedItem = itemStack.getItem();
-        return placedItem instanceof SpellParchment || placedItem instanceof CopyPasteSpellScroll
-                || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
+        return placedItem instanceof SpellParchment || placedItem instanceof CopyPasteSpellScroll;
+//               || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
     }
 
     @Override
-    public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
-        super.playerWillDestroy(worldIn, pos, state, player);
+    public @NotNull BlockState playerWillDestroy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         if (worldIn.getBlockEntity(pos) instanceof ArcaneApplicatorTile tile && tile.getStack() != null) {
             worldIn.addFreshEntity(new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), tile.getStack()));
         }
+        return super.playerWillDestroy(worldIn, pos, state, player);
     }
 
     @Override
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+    public void tick(@NotNull BlockState blockState, @NotNull ServerLevel serverLevel, @NotNull BlockPos blockPos, @NotNull RandomSource randomSource) {
         getApplicableStack(serverLevel, blockPos)
                 .ifPresent(itemStack -> this.handleApplicationSignal(itemStack, serverLevel, blockPos));
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new ArcaneApplicatorTile(blockPos, blockState);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(BlockStateProperties.WATERLOGGED);
         builder.add(BlockStateProperties.TRIGGERED);
@@ -202,7 +189,7 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     @Override
-    public FluidState getFluidState(BlockState state) {
+    public @NotNull FluidState getFluidState(BlockState state) {
         return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
     }
 
@@ -215,16 +202,16 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
-    public boolean hasAnalogOutputSignal(BlockState state) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
         return false;
     }
 
-    public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
+    public int getAnalogOutputSignal(@NotNull BlockState blockState, Level worldIn, @NotNull BlockPos pos) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 

@@ -7,6 +7,6 @@
   "render_type": "cutout",
   "parent": "block/cube_all",
   "textures": {
-    "all": "ars_instrumentum:blocks/arcane_applicator"
+    "all": "ars_instrumentum:block/arcane_applicator"
   }
 }

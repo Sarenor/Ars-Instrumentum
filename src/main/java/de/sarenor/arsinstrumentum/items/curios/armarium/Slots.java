@@ -13,7 +13,6 @@ public enum Slots {
 
     public static Slots getSlotForInt(int slotIndex) {
         return switch (slotIndex) {
-            case 0 -> SLOT_ONE;
             case 1 -> SLOT_TWO;
             case 2 -> SLOT_THREE;
             default -> SLOT_ONE;

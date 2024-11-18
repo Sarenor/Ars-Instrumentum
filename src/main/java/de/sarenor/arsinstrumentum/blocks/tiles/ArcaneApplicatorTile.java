@@ -3,11 +3,10 @@ package de.sarenor.arsinstrumentum.blocks.tiles;
 import com.hollingsworth.arsnouveau.common.block.ITickable;
 import com.hollingsworth.arsnouveau.common.block.tile.ModdedTile;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
-import de.sarenor.arsinstrumentum.items.RunicStorageStone;
-import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,26 +15,20 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
-import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationData;
-import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationFactory;
-import software.bernie.ars_nouveau.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, IAnimatable {
+public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, GeoBlockEntity {
     public static final String ARCANE_APPLICATOR_TILE_ID = "arcane_applicator_tile";
-    private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
     public ItemEntity entity;
     public float frames;
-    AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
     private ItemStack stack = ItemStack.EMPTY;
 
     public ArcaneApplicatorTile(BlockEntityType<?> tileEntityTypeIn, BlockPos blockPos, BlockState blockState) {
@@ -47,17 +40,17 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        super.load(compound);
-        this.stack = compound.contains("itemStack") ? ItemStack.of((CompoundTag) compound.get("itemStack")) : ItemStack.EMPTY;
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.stack = ItemStack.parseOptional(registries, tag.getCompound("itemStack"));
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.saveAdditional(tag,registries);
         if (getStack() != null) {
             CompoundTag reagentTag = new CompoundTag();
-            getStack().save(reagentTag);
+            getStack().save(registries, reagentTag);
             tag.put("itemStack", reagentTag);
         }
     }
@@ -98,7 +91,8 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     @Override
     public boolean canPlaceItem(int index, ItemStack itemStackToPlace) {
         Item itemToPlace = itemStackToPlace.getItem();
-        return stack == null || stack.isEmpty() && (itemToPlace instanceof ScrollOfSaveStarbuncle || itemToPlace instanceof RunicStorageStone || itemToPlace instanceof CopyPasteSpellScroll);
+        return false;
+        //return stack == null || stack.isEmpty() && (itemToPlace instanceof ScrollOfSaveStarbuncle || itemToPlace instanceof RunicStorageStone || itemToPlace instanceof CopyPasteSpellScroll);
     }
 
     @Override
@@ -118,22 +112,6 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
         this.setStack(ItemStack.EMPTY);
     }
 
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, final @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemHandler.cast();
-        }
-        return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        itemHandler.invalidate();
-        super.invalidateCaps();
-    }
-
     public ItemStack getStack() {
         return stack;
     }
@@ -144,12 +122,12 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
 
     }
 
     @Override
-    public AnimationFactory getFactory() {
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
         return factory;
     }
 }
