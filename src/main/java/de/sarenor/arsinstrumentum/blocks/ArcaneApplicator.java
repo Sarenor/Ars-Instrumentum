@@ -3,9 +3,13 @@ package de.sarenor.arsinstrumentum.blocks;
 import com.hollingsworth.arsnouveau.api.registry.SpellCasterRegistry;
 import com.hollingsworth.arsnouveau.common.block.TickableModBlock;
 import com.hollingsworth.arsnouveau.common.block.tile.BasicSpellTurretTile;
+import com.hollingsworth.arsnouveau.common.block.tile.RelayTile;
+import com.hollingsworth.arsnouveau.common.entity.Starbuncle;
 import com.hollingsworth.arsnouveau.common.items.SpellParchment;
 import de.sarenor.arsinstrumentum.blocks.tiles.ArcaneApplicatorTile;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
+import de.sarenor.arsinstrumentum.items.RunicStorageStone;
+import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -26,8 +30,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -37,8 +43,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.getNeighbours;
+import static de.sarenor.arsinstrumentum.utils.BlockPosUtils.isNeighbour;
 
 @SuppressWarnings("deprecation")
 public class ArcaneApplicator extends TickableModBlock implements EntityBlock, SimpleWaterloggedBlock {
@@ -84,28 +92,29 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
     }
 
     private void handleApplicationSignal(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-//        if (itemStack.getItem() instanceof ScrollOfSaveStarbuncle) {
-//            handleStarbuncleApply(itemStack, serverLevel, blockPos);
-//        } else if (itemStack.getItem() instanceof RunicStorageStone) {
-//            handleRelayApply(itemStack, serverLevel, blockPos);
-//        } else if (itemStack.getItem() instanceof CopyPasteSpellScroll || itemStack.getItem() instanceof SpellParchment) {
-//            handleSpellturretApply(itemStack, serverLevel, blockPos);
-//        }
+        var item = itemStack.getItem();
+        switch (item) {
+            case ScrollOfSaveStarbuncle ignored -> handleStarbuncleApply(itemStack, serverLevel, blockPos);
+            case RunicStorageStone ignored -> handleRelayApply(itemStack, serverLevel, blockPos);
+            case CopyPasteSpellScroll ignored -> handleSpellturretApply(itemStack, serverLevel, blockPos);
+            case SpellParchment ignored -> handleSpellturretApply(itemStack, serverLevel, blockPos);
+            default -> {}
+        }
     }
 
-//    private void handleStarbuncleApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-//        // Gets all Starbuncles with a bound bed that is adjacent to the Arcane Applicator
-//        serverLevel.getEntitiesOfClass(Starbuncle.class, new AABB(blockPos.north(10).west(10).below(6), blockPos.south(10).east(10).above(6))).stream()
-//                .filter(starbuncle -> isNeighbour(blockPos, starbuncle.data.bedPos))
-//                .forEach(starbuncle -> ScrollOfSaveStarbuncle.apply(itemStack, starbuncle, null));
-//    }
-//
-//    private void handleRelayApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
-//        StreamSupport.stream(getNeighbours(blockPos).spliterator(), false)
-//                .map(serverLevel::getBlockEntity)
-//                .filter(blockEntity -> blockEntity instanceof RelayTile)
-//                .forEach(blockEntity -> RunicStorageStone.apply(itemStack, (RelayTile) blockEntity, null));
-//    }
+    private void handleStarbuncleApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
+        // Gets all Starbuncles with a bound bed that is adjacent to the Arcane Applicator
+        serverLevel.getEntitiesOfClass(Starbuncle.class, AABB.encapsulatingFullBlocks(blockPos.north(10).west(10).below(6), blockPos.south(10).east(10).above(6))).stream()
+                .filter(starbuncle -> isNeighbour(blockPos, starbuncle.data.bedPos))
+                .forEach(starbuncle -> ScrollOfSaveStarbuncle.apply(itemStack, starbuncle, null));
+    }
+
+    private void handleRelayApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
+        StreamSupport.stream(getNeighbours(blockPos).spliterator(), false)
+                .map(serverLevel::getBlockEntity)
+                .filter(blockEntity -> blockEntity instanceof RelayTile)
+                .forEach(blockEntity -> RunicStorageStone.apply(itemStack, (RelayTile) blockEntity, null));
+    }
 
     private void handleSpellturretApply(ItemStack itemStack, ServerLevel serverLevel, BlockPos blockPos) {
         var copyPasteSpellcaster = SpellCasterRegistry.from(itemStack);
@@ -156,8 +165,8 @@ public class ArcaneApplicator extends TickableModBlock implements EntityBlock, S
 
     private boolean isHoldableItem(ItemStack itemStack) {
         Item placedItem = itemStack.getItem();
-        return placedItem instanceof SpellParchment || placedItem instanceof CopyPasteSpellScroll;
-//               || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
+        return placedItem instanceof SpellParchment || placedItem instanceof CopyPasteSpellScroll
+               || placedItem instanceof RunicStorageStone || placedItem instanceof ScrollOfSaveStarbuncle;
     }
 
     @Override

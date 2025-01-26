@@ -3,6 +3,8 @@ package de.sarenor.arsinstrumentum.blocks.tiles;
 import com.hollingsworth.arsnouveau.common.block.ITickable;
 import com.hollingsworth.arsnouveau.common.block.tile.ModdedTile;
 import de.sarenor.arsinstrumentum.items.CopyPasteSpellScroll;
+import de.sarenor.arsinstrumentum.items.RunicStorageStone;
+import de.sarenor.arsinstrumentum.items.ScrollOfSaveStarbuncle;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,9 +22,6 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Container, GeoBlockEntity {
     public static final String ARCANE_APPLICATOR_TILE_ID = "arcane_applicator_tile";
@@ -48,9 +47,10 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     @Override
     public void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag,registries);
-        if (getStack() != null) {
+        var stack = getStack();
+        if (stack != null && !stack.isEmpty()) {
             CompoundTag reagentTag = new CompoundTag();
-            getStack().save(registries, reagentTag);
+            stack.save(registries, reagentTag);
             tag.put("itemStack", reagentTag);
         }
     }
@@ -91,8 +91,7 @@ public class ArcaneApplicatorTile extends ModdedTile implements ITickable, Conta
     @Override
     public boolean canPlaceItem(int index, ItemStack itemStackToPlace) {
         Item itemToPlace = itemStackToPlace.getItem();
-        return false;
-        //return stack == null || stack.isEmpty() && (itemToPlace instanceof ScrollOfSaveStarbuncle || itemToPlace instanceof RunicStorageStone || itemToPlace instanceof CopyPasteSpellScroll);
+        return stack == null || stack.isEmpty() && (itemToPlace instanceof ScrollOfSaveStarbuncle || itemToPlace instanceof RunicStorageStone || itemToPlace instanceof CopyPasteSpellScroll);
     }
 
     @Override
