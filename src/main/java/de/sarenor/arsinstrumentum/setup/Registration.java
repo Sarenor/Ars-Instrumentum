@@ -46,10 +46,14 @@ public class Registration {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ArcaneApplicatorTile>> ARCANE_APPLICATOR_TILE;
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ArmariumStorage>> ARMARIUM_STORAGE;
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ScrollOfSaveStarbuncle.Data>> SCROLL_OF_SAVE_STARBUNCLE_DATA ;
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RunicStorageStone.Data>> RUNIC_STORAGE_STONE_DATA;
 
     // DATA COMPONENTS
     static {
         ARMARIUM_STORAGE = DATA_COMPONENTS.register("armarium_storage", () -> DataComponentType.<ArmariumStorage>builder().persistent(ArmariumStorage.CODEC.codec()).networkSynchronized(ArmariumStorage.STREAM_CODEC).build());
+        SCROLL_OF_SAVE_STARBUNCLE_DATA = DATA_COMPONENTS.register("scroll_of_save_starbuncle", () -> DataComponentType.<ScrollOfSaveStarbuncle.Data>builder().persistent(ScrollOfSaveStarbuncle.Data.CODEC.codec()).networkSynchronized(ScrollOfSaveStarbuncle.Data.STREAM_CODEC).build());
+        RUNIC_STORAGE_STONE_DATA = DATA_COMPONENTS.register("runic_storage_scroll", () -> DataComponentType.<RunicStorageStone.Data>builder().persistent(RunicStorageStone.Data.CODEC.codec()).networkSynchronized(RunicStorageStone.Data.STREAM_CODEC).build());
     }
 
     // BLOCKS
